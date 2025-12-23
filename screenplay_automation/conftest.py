@@ -1,3 +1,7 @@
+"""
+This module contains Pytest fixtures for setting up the Playwright browser, page, and Actors.
+These fixtures ensure a clean and consistent state for each test.
+"""
 import pytest
 from playwright.sync_api import Page, sync_playwright
 
@@ -14,6 +18,10 @@ from actors.finance import Finance
 
 @pytest.fixture(scope="session")
 def playwright_browser():
+    """
+    Provides a Playwright browser instance for the entire test session.
+    Set `headless=False` to see the browser UI during tests (useful for debugging).
+    """
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
         yield browser
@@ -21,9 +29,17 @@ def playwright_browser():
 
 @pytest.fixture(scope="function")
 def page(playwright_browser):
+    """
+    Provides a new Playwright Page instance for each test function.
+    """
     page = playwright_browser.new_page()
     yield page
     page.close()
+
+# --- Actor Fixtures ---
+# Each fixture initializes a specific Actor and grants them the BrowseTheWeb ability.
+# This allows tests to simply request `the_licensee` (or `the_area_manager`, etc.)
+# without needing to set up the actor in every test.
 
 @pytest.fixture(scope="function")
 def the_licensee(page: Page) -> Licensee:
@@ -56,4 +72,13 @@ def the_compliance(page: Page) -> Compliance:
 @pytest.fixture(scope="function")
 def the_finance(page: Page) -> Finance:
     return Finance().who_can(BrowseTheWeb.with_browser_page(page))
+
+# --- How to add a new Actor Fixture ---
+# 1. Ensure the Actor class is defined in `actors/` and imported here.
+# 2. Add a new fixture function:
+#    `@pytest.fixture(scope="function")`
+#    `def the_new_actor_role(page: Page) -> NewActorRole:`
+#        `return NewActorRole().who_can(BrowseTheWeb.with_browser_page(page))`
+#    (Replace `NewActorRole` with your actual actor class name).
+
 
