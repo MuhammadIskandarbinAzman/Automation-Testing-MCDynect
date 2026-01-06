@@ -6,17 +6,17 @@ LOGIN_CREDENTIALS = {
     "licensee": {
         "email": "licensee@gmail.com",
         "password": "masterpassword1234",
-        "expected_dashboard_url": "https://staging.mrchurros.com.my/licensee/dashboard" # This should be the actual URL after successful login
+        "expected_dashboard_url": "https://staging.mrchurros.com.my/licensee/dashboard" # Actual URL after successful login
     },
     "area_manager": {
         "email": "aiman.ghazali@mrchurros.com.my",
         "password": "masterpassword1234",
-        "expected_dashboard_url": "https://staging.mrchurros.com.my/area_manager/dashboard" # Placeholder - UPDATE THIS
+        "expected_dashboard_url": "https://staging.mrchurros.com.my/area-manager/dashboard" # Actual URL after successful login (uses hyphen, not underscore)
     },
     "inventory": {
         "email": "inventory@mrchurros.com.my",
         "password": "masterpassword1234",
-        "expected_dashboard_url": "https://staging.mrchurros.com.my/inventory/dashboard" # Placeholder - UPDATE THIS
+        "expected_dashboard_url": "https://staging.mrchurros.com.my/inventory/index" # Placeholder - UPDATE THIS
     },
     "procurement": {
         "email": "procurement@mrchurros.com.my",
@@ -31,17 +31,17 @@ LOGIN_CREDENTIALS = {
     "licensing": {
         "email": "licensing@mrchurros.com.my",
         "password": "masterpassword1234",
-        "expected_dashboard_url": "https://staging.mrchurros.com.my/licensing/dashboard" # Placeholder - UPDATE THIS
+        "expected_dashboard_url": "https://staging.mrchurros.com.my/licensing/dashboard" # Actual URL after successful login
     },
     "compliance": {
         "email": "compliance@mrchurros.com.my",
         "password": "masterpassword1234",
-        "expected_dashboard_url": "https://staging.mrchurros.com.my/compliance/dashboard" # Placeholder - UPDATE THIS
+        "expected_dashboard_url": "https://staging.mrchurros.com.my/compliance/index" # Placeholder - UPDATED
     },
     "finance": {
         "email": "finance@mrchurros.com.my",
         "password": "masterpassword1234",
-        "expected_dashboard_url": "https://staging.mrchurros.com.my/finance/dashboard" # Placeholder - UPDATE THIS
+        "expected_dashboard_url": "https://staging.mrchurros.com.my/finance/index" # Placeholder - UPDATE THIS
     }
 }
 

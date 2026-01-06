@@ -2,7 +2,9 @@
 This module contains Pytest fixtures for setting up the Playwright browser, page, and Actors.
 These fixtures ensure a clean and consistent state for each test.
 """
+import os
 import pytest
+from datetime import datetime
 from playwright.sync_api import Page, sync_playwright
 
 from abilities.browse_the_web import BrowseTheWeb
@@ -16,6 +18,65 @@ from actors.licensing import Licensing
 from actors.compliance import Compliance
 from actors.finance import Finance
 
+
+# ... your other fixtures above ...
+
+def pytest_configure(config):
+    """
+    Called once at test session startup.
+    Creates a timestamped output directory and attaches it to config.
+    """
+    base_dir = "/Users/iskandarazman/MCDynect /screenplay_automation"
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    test_output_dir = os.path.join(base_dir, "test_runs", timestamp)
+    os.makedirs(test_output_dir, exist_ok=True)
+    config.test_output_dir = test_output_dir  
+    # Make it globally accessible
+
+@pytest.hookimpl(hookwrapper=True)
+def pytest_runtest_makereport(item, call):
+    """
+    Hook that captures screenshots after each test execution.
+    Screenshots are saved in the session-specific output directory.
+    """
+    outcome = yield
+    rep = outcome.get_result()
+
+    # Only proceed if we're in the "call" phase (actual test execution)
+    if rep.when != "call":
+        return
+
+    # Get Playwright page if available
+    page = item.funcargs.get("page", None)
+    if page is None:
+        return
+
+    # Get the session-wide output directory created in pytest_configure
+    test_output_dir = item.config.test_output_dir
+    screenshots_dir = os.path.join(test_output_dir, "screenshots")
+    os.makedirs(screenshots_dir, exist_ok=True)
+
+    # Generate safe filename from test nodeid
+    safe_test_name = (
+        rep.nodeid
+        .replace("/", "_")
+        .replace("::", "__")
+        .replace(".py", "")
+        .replace(" ", "_")
+    )
+    base_path = os.path.join(screenshots_dir, safe_test_name)
+
+    # Wait for page stability before screenshot
+    try:
+        page.wait_for_load_state("networkidle", timeout=5000)
+    except Exception:
+        pass  # Proceed even if timeout
+
+    # Take screenshot on pass or fail
+    if rep.failed:
+        page.screenshot(path=f"{base_path}__FAILED.png", full_page=True)
+    elif rep.passed:
+        page.screenshot(path=f"{base_path}__PASSED.png", full_page=True)
 @pytest.fixture(scope="session")
 def playwright_browser():
     """
@@ -23,7 +84,7 @@ def playwright_browser():
     Set `headless=False` to see the browser UI during tests (useful for debugging).
     """
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True)
+        browser = p.chromium.launch(headless=False)
         yield browser
         browser.close()
 
