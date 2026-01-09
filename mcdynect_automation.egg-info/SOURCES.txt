@@ -1,0 +1,8 @@
+pyproject.toml
+mcdynect_automation.egg-info/PKG-INFO
+mcdynect_automation.egg-info/SOURCES.txt
+mcdynect_automation.egg-info/dependency_links.txt
+mcdynect_automation.egg-info/requires.txt
+mcdynect_automation.egg-info/top_level.txt
+tests/test_licensee_profile_settings.py
+tests/test_login_scenario.py

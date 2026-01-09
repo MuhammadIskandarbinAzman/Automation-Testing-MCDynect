@@ -1,0 +1,8 @@
+pyproject.toml
+screenplay_automation.egg-info/PKG-INFO
+screenplay_automation.egg-info/SOURCES.txt
+screenplay_automation.egg-info/dependency_links.txt
+screenplay_automation.egg-info/requires.txt
+screenplay_automation.egg-info/top_level.txt
+tests/test_licensee_profile_settings.py
+tests/test_login_scenario.py
