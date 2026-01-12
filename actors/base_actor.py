@@ -44,4 +44,9 @@ class Actor:
         for task in tasks:
             task.perform_as(self)
 
-
+    def asks_for(self, question: Any) -> Any:
+        """
+        Asks the actor to answer a question using their abilities.
+        Example: profile = the_licensee.asks_for(GetProfileInfo())
+        """
+        return question.answered_by(self)
