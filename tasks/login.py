@@ -6,6 +6,7 @@ from actors.base_actor import Actor
 from abilities.browse_the_web import BrowseTheWeb
 from ui.login_page_ui import LoginPageUI
 from config.credentials import BASE_URL
+from playwright.sync_api import TimeoutError as PlaywrightTimeoutError
 
 class Login:
     """

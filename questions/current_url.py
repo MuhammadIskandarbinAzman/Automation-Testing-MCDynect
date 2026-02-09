@@ -5,5 +5,6 @@ from abilities.browse_the_web import BrowseTheWeb
 class CurrentURL:
     @staticmethod
     def value_for(actor: Actor) -> str:
+        # Use the BrowseTheWeb ability to fetch the current URL.
         browser = actor.uses_ability(BrowseTheWeb)
         return browser.check_url()

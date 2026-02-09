@@ -6,8 +6,11 @@ class LoginPageUI:
     """
     Locators for elements on the login page.
     """
+    # Email input field selector.
     EMAIL_FIELD = "//input[@id='email']"
+    # Password input field selector.
     PASSWORD_FIELD = "//input[@id='password']"
+    # Sign in button selector using role for stability.
     SIGN_IN_BUTTON = "role=button[name=\"Sign in\"]"
     # The ERROR_MESSAGE locator is now very specific based on previous debugging.
     ERROR_MESSAGE = "p.text-error-500 >> text='These credentials do not match our records.'"
@@ -19,4 +22,3 @@ class LoginPageUI:
 #    Example: `DASHBOARD_TITLE = "h1.dashboard-title"`.
 #    Example: `USER_PROFILE_LINK = "a[aria-label='User Profile']"`.
 # 4. Remember to use robust locators (role, text, CSS, XPath) and make them as specific as needed.
-

@@ -30,25 +30,26 @@ def test_licensee_can_log_in(the_licensee: Licensee):
     Waits for the dashboard URL after login before further assertions.
     """
     from abilities.browse_the_web import BrowseTheWeb
+    # Pull credentials and expected landing URL from config.
     credentials = LOGIN_CREDENTIALS["licensee"]
     the_licensee.attempts_to(
         Login.with_credentials(credentials["email"], credentials["password"])
     )
-    # Wait for URL redirection before screenshots or dashboard assertions
+    # Wait for URL redirection before screenshots or dashboard assertions.
     browser = the_licensee.uses_ability(BrowseTheWeb)
     browser.page.wait_for_url(credentials["expected_dashboard_url"], timeout=10000)
-    # Wait for page to be fully loaded (network idle) to ensure all content is rendered
+    # Wait for page to be fully loaded (network idle) to ensure all content is rendered.
     browser.page.wait_for_load_state("networkidle", timeout=10000)
-    # Additional small wait to ensure JavaScript-rendered content is displayed
+    # Additional small wait to ensure JavaScript-rendered content is displayed.
     browser.page.wait_for_timeout(10000)  # Wait 1 second for any dynamic content
     assert CurrentURL.value_for(the_licensee) == credentials["expected_dashboard_url"], (
         f"Expected URL {credentials['expected_dashboard_url']}, got {CurrentURL.value_for(the_licensee)}"
     )
-    # Assert personalized welcome message is visible and contains expected text
+    # Assert personalized welcome message is visible and contains expected text.
     from questions.licensee_dashboard import LicenseeDashboard
-    # Get the welcome text (this will wait for the element and throw if not found)
+    # Get the welcome text (this will wait for the element and throw if not found).
     welcome_text = LicenseeDashboard.welcome_header_text(the_licensee)
-    # Verify the welcome message exists and contains expected text
+    # Verify the welcome message exists and contains expected text.
     assert welcome_text, "Welcome message not found on the dashboard!"
     assert "Welcome Back" in welcome_text, (
         f"Welcome message does not contain 'Welcome Back'. Found: '{welcome_text}'"
@@ -70,6 +71,7 @@ def test_licensee_cannot_log_in_with_invalid_credentials(the_licensee: Licensee,
     Verifies that a Licensee actor cannot log in with invalid credentials
     and the correct error message is displayed.
     """
+    # Submit invalid credentials and expect the UI error.
     the_licensee.attempts_to(
         Login.with_credentials("invalid@gmail.com", "invalidpassword")
     )
@@ -83,25 +85,26 @@ def test_area_manager_can_log_in(the_area_manager: AreaManager):
     Waits for the dashboard URL after login before further assertions.
     """
     from abilities.browse_the_web import BrowseTheWeb
+    # Pull credentials and expected landing URL from config.
     credentials = LOGIN_CREDENTIALS["area_manager"]
     the_area_manager.attempts_to(
         Login.with_credentials(credentials["email"], credentials["password"])
     )
-    # Wait for URL redirection before screenshots or dashboard assertions
+    # Wait for URL redirection before screenshots or dashboard assertions.
     browser = the_area_manager.uses_ability(BrowseTheWeb)
     browser.page.wait_for_url(credentials["expected_dashboard_url"], timeout=10000)
-    # Wait for page to be fully loaded (network idle) to ensure all content is rendered
+    # Wait for page to be fully loaded (network idle) to ensure all content is rendered.
     browser.page.wait_for_load_state("networkidle", timeout=10000)
-    # Additional small wait to ensure JavaScript-rendered content is displayed
+    # Additional small wait to ensure JavaScript-rendered content is displayed.
     browser.page.wait_for_timeout(10000)  # Wait 1 second for any dynamic content
     assert CurrentURL.value_for(the_area_manager) == credentials["expected_dashboard_url"], (
         f"Expected URL {credentials['expected_dashboard_url']}, got {CurrentURL.value_for(the_area_manager)}"
     )
-    # Assert personalized welcome message is visible and contains expected text
+    # Assert personalized welcome message is visible and contains expected text.
     from questions.area_manager_dashboard import AreaManagerDashboard
-    # Get the welcome text (this will wait for the element and throw if not found)
+    # Get the welcome text (this will wait for the element and throw if not found).
     welcome_text = AreaManagerDashboard.welcome_header_text(the_area_manager)
-    # Verify the welcome message exists and contains expected text
+    # Verify the welcome message exists and contains expected text.
     assert welcome_text, "Welcome message not found on the dashboard!"
     assert "Welcome Back" in welcome_text, (
         f"Welcome message does not contain 'Welcome Back'. Found: '{welcome_text}'"
@@ -117,26 +120,27 @@ def test_inventory_can_log_in(the_inventory: Inventory):
     Waits for the dashboard URL after login before further assertions.
     """
     from abilities.browse_the_web import BrowseTheWeb
+    # Pull credentials and expected landing URL from config.
     credentials = LOGIN_CREDENTIALS["inventory"]
     the_inventory.attempts_to(
         Login.with_credentials(credentials["email"], credentials["password"])
     )
-    # Wait for URL redirection before screenshots or dashboard assertions
+    # Wait for URL redirection before screenshots or dashboard assertions.
     browser = the_inventory.uses_ability(BrowseTheWeb)
     browser.page.wait_for_url(credentials["expected_dashboard_url"], timeout=10000)
-    # Wait for page to be fully loaded (network idle) to ensure all content is rendered
+    # Wait for page to be fully loaded (network idle) to ensure all content is rendered.
     browser.page.wait_for_load_state("networkidle", timeout=10000)
-    # Additional small wait to ensure JavaScript-rendered content is displayed
+    # Additional small wait to ensure JavaScript-rendered content is displayed.
     browser.page.wait_for_timeout(10000)  # Wait 10 seconds for any dynamic content
     assert CurrentURL.value_for(the_inventory) == credentials["expected_dashboard_url"], (
         f"Expected URL {credentials['expected_dashboard_url']}, got {CurrentURL.value_for(the_inventory)}"
     )
-    # Assert personalized welcome message is visible and contains expected text
+    # Assert personalized welcome message is visible and contains expected text.
     from questions.inventory_dashboard import InventoryDashboard
-    # Get the welcome text (this will wait for the element and throw if not found)
+    # Get the welcome text (this will wait for the element and throw if not found).
     welcome_text = InventoryDashboard.welcome_header_text(the_inventory)
     
-    # Debug: Print what we found if empty
+    # Debug: Print what we found if empty.
     if not welcome_text:
         # Try to get page title and first few h1/h2 elements for debugging
         try:
@@ -154,7 +158,7 @@ def test_inventory_can_log_in(the_inventory: Inventory):
         except Exception as e:
             assert False, f"Welcome message not found on the dashboard! Error getting debug info: {str(e)}"
     
-    # Verify the welcome message exists and contains expected text
+    # Verify the welcome message exists and contains expected text.
     # For inventory, we'll be more flexible - just check if it contains "Welcome" or "Dashboard"
     assert welcome_text, "Welcome message not found on the dashboard!"
     
@@ -170,26 +174,27 @@ def test_procurement_can_log_in(the_procurement: Procurement):
     Waits for the dashboard URL after login before further assertions.
     """
     from abilities.browse_the_web import BrowseTheWeb
+    # Pull credentials and expected landing URL from config.
     credentials = LOGIN_CREDENTIALS["procurement"]
     the_procurement.attempts_to(
         Login.with_credentials(credentials["email"], credentials["password"])
     )
-    # Wait for URL redirection before screenshots or dashboard assertions
+    # Wait for URL redirection before screenshots or dashboard assertions.
     browser = the_procurement.uses_ability(BrowseTheWeb)
     browser.page.wait_for_url(credentials["expected_dashboard_url"], timeout=10000)
-    # Wait for page to be fully loaded (network idle) to ensure all content is rendered
+    # Wait for page to be fully loaded (network idle) to ensure all content is rendered.
     browser.page.wait_for_load_state("networkidle", timeout=10000)
-    # Additional small wait to ensure JavaScript-rendered content is displayed
+    # Additional small wait to ensure JavaScript-rendered content is displayed.
     browser.page.wait_for_timeout(10000)  # Wait 10 seconds for any dynamic content
     assert CurrentURL.value_for(the_procurement) == credentials["expected_dashboard_url"], (
         f"Expected URL {credentials['expected_dashboard_url']}, got {CurrentURL.value_for(the_procurement)}"
     )
-    # Assert personalized welcome message is visible and contains expected text
+    # Assert personalized welcome message is visible and contains expected text.
     from questions.procurement_dashboard import ProcurementDashboard
-    # Get the welcome text (this will wait for the element and throw if not found)
+    # Get the welcome text (this will wait for the element and throw if not found).
     welcome_text = ProcurementDashboard.welcome_header_text(the_procurement)
     
-    # Debug: Print what we found if empty
+    # Debug: Print what we found if empty.
     if not welcome_text:
         # Try to get page title and first few h1/h2 elements for debugging
         try:
@@ -223,26 +228,27 @@ def test_production_can_log_in(the_production: Production):
     Waits for the dashboard URL after login before further assertions.
     """
     from abilities.browse_the_web import BrowseTheWeb
+    # Pull credentials and expected landing URL from config.
     credentials = LOGIN_CREDENTIALS["finance"]
     the_production.attempts_to(
         Login.with_credentials(credentials["email"], credentials["password"])
     )
-    # Wait for URL redirection before screenshots or dashboard assertions
+    # Wait for URL redirection before screenshots or dashboard assertions.
     browser = the_production.uses_ability(BrowseTheWeb)
     browser.page.wait_for_url(credentials["expected_dashboard_url"], timeout=10000)
-    # Wait for page to be fully loaded (network idle) to ensure all content is rendered
+    # Wait for page to be fully loaded (network idle) to ensure all content is rendered.
     browser.page.wait_for_load_state("networkidle", timeout=10000)
-    # Additional small wait to ensure JavaScript-rendered content is displayed
+    # Additional small wait to ensure JavaScript-rendered content is displayed.
     browser.page.wait_for_timeout(10000)  # Wait 10 seconds for any dynamic content
     assert CurrentURL.value_for(the_production) == credentials["expected_dashboard_url"], (
         f"Expected URL {credentials['expected_dashboard_url']}, got {CurrentURL.value_for(the_production)}"
     )
-    # Assert personalized welcome message is visible and contains expected text
+    # Assert personalized welcome message is visible and contains expected text.
     from questions.production_dashboard import ProductionDashboard
-    # Get the welcome text (this will wait for the element and throw if not found)
+    # Get the welcome text (this will wait for the element and throw if not found).
     welcome_text = ProductionDashboard.welcome_header_text(the_production)
     
-    # Debug: Print what we found if empty
+    # Debug: Print what we found if empty.
     if not welcome_text:
         # Try to get page title and first few h1/h2 elements for debugging
         try:
@@ -260,7 +266,7 @@ def test_production_can_log_in(the_production: Production):
         except Exception as e:
             assert False, f"Welcome message not found on the dashboard! Error getting debug info: {str(e)}"
     
-    # Verify the welcome message exists and contains expected text
+    # Verify the welcome message exists and contains expected text.
     # For inventory, we'll be more flexible - just check if it contains "Welcome" or "Dashboard"
     assert welcome_text, "Welcome message not found on the dashboard!"
     
@@ -275,26 +281,27 @@ def test_licensing_can_log_in(the_licensing: Licensing):
     Waits for the dashboard URL after login before further assertions.
     """
     from abilities.browse_the_web import BrowseTheWeb
+    # Pull credentials and expected landing URL from config.
     credentials = LOGIN_CREDENTIALS["licensing"]
     the_licensing.attempts_to(
         Login.with_credentials(credentials["email"], credentials["password"])
     )
-    # Wait for URL redirection before screenshots or dashboard assertions
+    # Wait for URL redirection before screenshots or dashboard assertions.
     browser = the_licensing.uses_ability(BrowseTheWeb)
     browser.page.wait_for_url(credentials["expected_dashboard_url"], timeout=10000)
-    # Wait for page to be fully loaded (network idle) to ensure all content is rendered
+    # Wait for page to be fully loaded (network idle) to ensure all content is rendered.
     browser.page.wait_for_load_state("networkidle", timeout=10000)
-    # Additional small wait to ensure JavaScript-rendered content is displayed
+    # Additional small wait to ensure JavaScript-rendered content is displayed.
     browser.page.wait_for_timeout(10000)  # Wait 1 second for any dynamic content
     assert CurrentURL.value_for(the_licensing) == credentials["expected_dashboard_url"], (
         f"Expected URL {credentials['expected_dashboard_url']}, got {CurrentURL.value_for(the_licensing)}"
     )
-    # Assert personalized welcome message is visible and contains expected text
+    # Assert personalized welcome message is visible and contains expected text.
     from questions.licensing_dashboard import LicensingDashboard
-    # Get the welcome text (this will wait for the element and throw if not found)
+    # Get the welcome text (this will wait for the element and throw if not found).
     welcome_text = LicensingDashboard.welcome_header_text(the_licensing)
     
-    # Debug: Print what we found if empty
+    # Debug: Print what we found if empty.
     if not welcome_text:
         # Try to get page title and first few h1/h2 elements for debugging
         try:
@@ -312,7 +319,7 @@ def test_licensing_can_log_in(the_licensing: Licensing):
         except Exception as e:
             assert False, f"Welcome message not found on the dashboard! Error getting debug info: {str(e)}"
     
-    # Verify the welcome message exists and contains expected text
+    # Verify the welcome message exists and contains expected text.
     # For licensing, we'll be more flexible - just check if it contains "Welcome" or "Dashboard"
     assert welcome_text, "Welcome message not found on the dashboard!"
     
@@ -327,26 +334,27 @@ def test_compliance_can_log_in(the_compliance: Compliance):
     Verifies that a Compliance actor can successfully log into the application.
     """
     from abilities.browse_the_web import BrowseTheWeb
+    # Pull credentials and expected landing URL from config.
     credentials = LOGIN_CREDENTIALS["compliance"]
     the_compliance.attempts_to(
         Login.with_credentials(credentials["email"], credentials["password"])
     )
-     # Wait for URL redirection before screenshots or dashboard assertions
+     # Wait for URL redirection before screenshots or dashboard assertions.
     browser = the_compliance.uses_ability(BrowseTheWeb)
     browser.page.wait_for_url(credentials["expected_dashboard_url"], timeout=10000)
-    # Wait for page to be fully loaded (network idle) to ensure all content is rendered
+    # Wait for page to be fully loaded (network idle) to ensure all content is rendered.
     browser.page.wait_for_load_state("networkidle", timeout=10000)
-    # Additional small wait to ensure JavaScript-rendered content is displayed
+    # Additional small wait to ensure JavaScript-rendered content is displayed.
     browser.page.wait_for_timeout(10000)  # Wait 10 seconds for any dynamic content
     assert CurrentURL.value_for(the_compliance) == credentials["expected_dashboard_url"], (
         f"Expected URL {credentials['expected_dashboard_url']}, got {CurrentURL.value_for(the_compliance)}"
     )
-    # Assert personalized welcome message is visible and contains expected text
+    # Assert personalized welcome message is visible and contains expected text.
     from questions.inventory_dashboard import InventoryDashboard
-    # Get the welcome text (this will wait for the element and throw if not found)
+    # Get the welcome text (this will wait for the element and throw if not found).
     welcome_text = InventoryDashboard.welcome_header_text(the_compliance)
     
-    # Debug: Print what we found if empty
+    # Debug: Print what we found if empty.
     if not welcome_text:
         # Try to get page title and first few h1/h2 elements for debugging
         try:
@@ -364,7 +372,7 @@ def test_compliance_can_log_in(the_compliance: Compliance):
         except Exception as e:
             assert False, f"Welcome message not found on the dashboard! Error getting debug info: {str(e)}"
     
-    # Verify the welcome message exists and contains expected text
+    # Verify the welcome message exists and contains expected text.
     # For inventory, we'll be more flexible - just check if it contains "Welcome" or "Dashboard"
     assert welcome_text, "Welcome message not found on the dashboard!"
     
@@ -381,26 +389,27 @@ def test_finance_can_log_in(the_finance: Finance):
     Waits for the dashboard URL after login before further assertions.
     """
     from abilities.browse_the_web import BrowseTheWeb
+    # Pull credentials and expected landing URL from config.
     credentials = LOGIN_CREDENTIALS["finance"]
     the_finance.attempts_to(
         Login.with_credentials(credentials["email"], credentials["password"])
     )
-    # Wait for URL redirection before screenshots or dashboard assertions
+    # Wait for URL redirection before screenshots or dashboard assertions.
     browser = the_finance.uses_ability(BrowseTheWeb)
     browser.page.wait_for_url(credentials["expected_dashboard_url"], timeout=10000)
-    # Wait for page to be fully loaded (network idle) to ensure all content is rendered
+    # Wait for page to be fully loaded (network idle) to ensure all content is rendered.
     browser.page.wait_for_load_state("networkidle", timeout=10000)
-    # Additional small wait to ensure JavaScript-rendered content is displayed
+    # Additional small wait to ensure JavaScript-rendered content is displayed.
     browser.page.wait_for_timeout(10000)  # Wait 10 seconds for any dynamic content
     assert CurrentURL.value_for(the_finance) == credentials["expected_dashboard_url"], (
         f"Expected URL {credentials['expected_dashboard_url']}, got {CurrentURL.value_for(the_finance)}"
     )
-    # Assert personalized welcome message is visible and contains expected text
+    # Assert personalized welcome message is visible and contains expected text.
     from questions.finance_dashboard import FinanceDashboard
-    # Get the welcome text (this will wait for the element and throw if not found)
+    # Get the welcome text (this will wait for the element and throw if not found).
     welcome_text = FinanceDashboard.welcome_header_text(the_finance)
     
-    # Debug: Print what we found if empty
+    # Debug: Print what we found if empty.
     if not welcome_text:
         # Try to get page title and first few h1/h2 elements for debugging
         try:
@@ -418,7 +427,7 @@ def test_finance_can_log_in(the_finance: Finance):
         except Exception as e:
             assert False, f"Welcome message not found on the dashboard! Error getting debug info: {str(e)}"
     
-    # Verify the welcome message exists and contains expected text
+    # Verify the welcome message exists and contains expected text.
     # For inventory, we'll be more flexible - just check if it contains "Welcome" or "Dashboard"
     assert welcome_text, "Welcome message not found on the dashboard!"
     

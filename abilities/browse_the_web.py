@@ -34,8 +34,13 @@ class BrowseTheWeb:
         """
         # Clear cookies at the browser context level.
         self.page.context.clear_cookies()
-        # Clear local/session storage for the current origin.
-        self.page.evaluate("() => { localStorage.clear(); sessionStorage.clear(); }")
+        # Clear local/session storage for the current origin if possible.
+        try:
+            self.page.evaluate("() => { localStorage.clear(); sessionStorage.clear(); }")
+        except Exception:
+            # If we're on about:blank or another origin where access is denied,
+            # we just skip clearing storage as there's nothing relevant to clear.
+            pass
 
     def find_and_fill(self, locator: str, value: str) -> None:
         """

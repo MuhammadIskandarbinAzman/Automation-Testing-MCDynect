@@ -4,5 +4,6 @@ from config.selectors import ProfileSelectors
 class ProfileUpdateSuccess:
     @staticmethod
     def answered_by(actor):
+        # Check for the generic success toast/message after save.
         page = actor.uses_ability(BrowseTheWeb).page
         return page.is_visible(ProfileSelectors.SUCCESS_MESSAGE)

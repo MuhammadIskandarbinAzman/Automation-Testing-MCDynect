@@ -9,5 +9,5 @@ class DashboardPageUI:
     # Welcome message heading - appears after successful login
     # HTML: <h1 class="">Welcome Back, L23#304</h1>
     # Using text matching to avoid strict mode violation when multiple h1 elements exist
+    # Keep this generic so it works across roles.
     WELCOME_MESSAGE_H1 = "h1"
-

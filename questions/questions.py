@@ -19,4 +19,5 @@ class Question(ABC):
         Returns:
             The answer to the question
         """
+        # Implementations should use actor abilities to query the UI.
         pass
