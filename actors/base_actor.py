@@ -16,7 +16,9 @@ class Actor:
     _abilities: Dict[Type, Any]
 
     def __init__(self, name: str = "Actor"):
+        # Default display name for reporting/debugging.
         self.name = name
+        # Map of ability type -> ability instance.
         self._abilities = {}
 
     def who_can(self, ability: T) -> "Actor":
@@ -24,6 +26,7 @@ class Actor:
         Grants the actor a specific ability.
         Example: `Actor().who_can(BrowseTheWeb.with_browser_page(page))`
         """
+        # Store ability keyed by its class for fast lookup.
         self._abilities[type(ability)] = ability
         return self
 
@@ -32,6 +35,7 @@ class Actor:
         Retrieves a specific ability for the actor to use.
         Used internally by Tasks and Questions.
         """
+        # Fail fast if a task/question requires a missing ability.
         if ability_type not in self._abilities:
             raise ValueError(f"{self.name} does not have the ability {ability_type.__name__}")
         return self._abilities[ability_type]
@@ -41,6 +45,7 @@ class Actor:
         Instructs the actor to perform one or more tasks.
         Example: `the_licensee.attempts_to(Login.with_credentials("email", "password"))`
         """
+        # Run tasks in sequence to model a user workflow.
         for task in tasks:
             task.perform_as(self)
 
@@ -49,4 +54,5 @@ class Actor:
         Asks the actor to answer a question using their abilities.
         Example: profile = the_licensee.asks_for(GetProfileInfo())
         """
+        # Delegate the query to the Question object.
         return question.answered_by(self)

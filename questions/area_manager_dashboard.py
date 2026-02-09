@@ -18,6 +18,7 @@ class AreaManagerDashboard:
         Example: "Welcome Back, HQO#05"
         Uses multiple strategies to find the welcome message h1 element.
         """
+        # Use the actor's browser ability to inspect the dashboard.
         browser = actor.uses_ability(BrowseTheWeb)
         
         # Strategy 1: Use get_by_text() to find the text, then get parent h1
@@ -78,6 +79,7 @@ class AreaManagerDashboard:
         Uses multiple strategies to find the welcome message to handle different page structures.
         If we can successfully get the welcome text, we consider it visible.
         """
+        # Use the actor's browser ability to check visibility.
         browser = actor.uses_ability(BrowseTheWeb)
         
         # Strategy 1: Check if "Welcome Back" text is visible anywhere on the page
@@ -113,4 +115,3 @@ class AreaManagerDashboard:
             pass
         
         return False
-

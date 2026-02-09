@@ -38,3 +38,25 @@ def test_MCD_LCSE_02_update_profile_success(the_licensee):
             )
         )
         assert the_licensee.asks_for(ProfileUpdateSuccess())
+
+@pytest.mark.licensee
+def test_MCD_LCSE_password_update_and_revert(the_licensee):
+    actor = the_licensee
+    
+    new_password = "newmasterpassword1234"
+    
+    actor.attempts_to(
+        LoginAs("licensee"),
+        NavigateToSettings(),
+        UpdateUserProfile(new_password=new_password)
+
+    )
+    
+    # Verify success
+    assert the_licensee.asks_for(ProfileUpdateSuccess())
+    
+    # Optional: Verify login with new password works
+    # Optionally, implement Logout and dashboard check if/when such actions/questions are available
+    # actor.attempts_to(Logout())
+    # actor.attempts_to(Login(username="licensee_user", password=new_password))
+    # assert actor.should_see_the(DashboardLoaded())

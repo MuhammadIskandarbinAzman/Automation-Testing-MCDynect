@@ -1,3 +1,5 @@
+import time
+
 from abilities.browse_the_web import BrowseTheWeb
 from config.selectors import ProfileSelectors
 

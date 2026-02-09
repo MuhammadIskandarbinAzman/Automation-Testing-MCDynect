@@ -5,12 +5,14 @@ Tasks represent high-level business actions an Actor attempts.
 from actors.base_actor import Actor
 from abilities.browse_the_web import BrowseTheWeb
 from ui.login_page_ui import LoginPageUI
+from config.credentials import BASE_URL
 
 class Login:
     """
     A task for an Actor to log into the application.
     """
     def __init__(self, email, password):
+        # Store credentials for this login attempt.
         self.email = email
         self.password = password
 
@@ -20,14 +22,30 @@ class Login:
         Factory method to create a Login task with specific credentials.
         Example: `Login.with_credentials("user@example.com", "password")`
         """
+        # Factory to keep call sites concise.
         return Login(email, password)
 
     def perform_as(self, actor: Actor):
         """
         Performs the login action using the Actor's BrowseTheWeb ability.
         """
+        # Use the actor's browser ability to drive the UI.
         browser = actor.uses_ability(BrowseTheWeb)
-        browser.go_to("https://staging.mrchurros.com.my/login") # Consider making this dynamic from config
+        # Ensure we are logged out before attempting a new login.
+        browser.clear_session()
+        # Navigate to login page using configurable base URL.
+        browser.go_to(f"{BASE_URL}/login")
+        # If we're already authenticated, /login may redirect away and the email field won't exist.
+        page = browser.page
+        try:
+            page.wait_for_selector(LoginPageUI.EMAIL_FIELD, timeout=5000)
+        except PlaywrightTimeoutError:
+            # Only skip if we were redirected off the login route.
+            if "/login" in page.url:
+                raise
+            return
+
+        # Fill credentials and submit the form.
         browser.find_and_fill(LoginPageUI.EMAIL_FIELD, self.email)
         browser.find_and_fill(LoginPageUI.PASSWORD_FIELD, self.password)
         browser.find_and_click(LoginPageUI.SIGN_IN_BUTTON)
@@ -41,4 +59,3 @@ class Login:
 #    - Get necessary abilities: `browser = actor.uses_ability(BrowseTheWeb)`.
 #    - Use the ability methods and UI locators to define the steps of the task.
 #      Example: `browser.find_and_click(ProductPageUI.ADD_TO_CART_BUTTON(self.product_name))`.
-

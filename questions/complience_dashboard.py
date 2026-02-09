@@ -18,6 +18,7 @@ class ComplianceDashboard:
         The inventory dashboard might have a different structure than licensee dashboard.
         Uses multiple strategies to find the welcome message.
         """
+        # Use the actor's browser ability to inspect the dashboard.
         browser = actor.uses_ability(BrowseTheWeb)
         
         # Strategy 1: Try to find "Welcome Back" text
@@ -117,6 +118,7 @@ class ComplianceDashboard:
         Uses multiple strategies to find the welcome message to handle different page structures.
         If we can successfully get the welcome text, we consider it visible.
         """
+        # Use the actor's browser ability to check visibility.
         browser = actor.uses_ability(BrowseTheWeb)
         
         # Strategy 1: Check if "Welcome Back" text is visible anywhere on the page
