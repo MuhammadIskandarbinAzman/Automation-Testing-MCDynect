@@ -6,46 +6,46 @@ LOGIN_CREDENTIALS = {
     "licensee": {
         "email": "licensee@gmail.com",
         "password": "masterpassword1234",
-        "expected_dashboard_url": "https://staging.mrchurros.com.my/licensee/dashboard" # Actual URL after successful login
+        "expected_dashboard_url": "https://mrchurros.afed.app/licensee/dashboard" # Actual URL after successful login
     },
     "area_manager": {
         "email": "aiman.ghazali@mrchurros.com.my",
         "password": "masterpassword1234",
-        "expected_dashboard_url": "https://staging.mrchurros.com.my/area-manager/dashboard" # Actual URL after successful login (uses hyphen, not underscore)
+        "expected_dashboard_url": "https://mrchurros.afed.app/area-manager/dashboard" # Actual URL after successful login (uses hyphen, not underscore)
     },
     "inventory": {
         "email": "inventory@mrchurros.com.my",
         "password": "masterpassword1234",
-        "expected_dashboard_url": "https://staging.mrchurros.com.my/inventory/index" # Placeholder - UPDATE THIS
+        "expected_dashboard_url": "https://mrchurros.afed.app/inventory/dashboard" # Actual URL after successful login
     },
     "procurement": {
         "email": "procurement@mrchurros.com.my",
         "password": "masterpassword1234",
-        "expected_dashboard_url": "https://staging.mrchurros.com.my/procurement/dashboard" # Placeholder - UPDATE THIS
+        "expected_dashboard_url": "https://mrchurros.afed.app/procurement/dashboard" # Placeholder - UPDATE THIS
     },
     "production": {
         "email": "production@mrchurros.com.my",
         "password": "masterpassword1234",
-        "expected_dashboard_url": "https://staging.mrchurros.com.my/production/dashboard" # Placeholder - UPDATE THIS
+        "expected_dashboard_url": "https://mrchurros.afed.app/production/dashboard" # Placeholder - UPDATE THIS
     },
     "licensing": {
         "email": "licensing@mrchurros.com.my",
         "password": "masterpassword1234",
-        "expected_dashboard_url": "https://staging.mrchurros.com.my/licensing/dashboard" # Actual URL after successful login
+        "expected_dashboard_url": "https://mrchurros.afed.app/licensing/dashboard" # Actual URL after successful login
     },
     "compliance": {
         "email": "compliance@mrchurros.com.my",
         "password": "masterpassword1234",
-        "expected_dashboard_url": "https://staging.mrchurros.com.my/compliance/index" # Placeholder - UPDATED
+        "expected_dashboard_url": "https://mrchurros.afed.app/compliance/dashboard" # Actual URL after successful login
     },
     "finance": {
         "email": "finance@mrchurros.com.my",
         "password": "masterpassword1234",
-        "expected_dashboard_url": "https://staging.mrchurros.com.my/finance/index" # Placeholder - UPDATE THIS
+        "expected_dashboard_url": "https://mrchurros.afed.app/finance/dashboard" # Actual URL after successful login
     }
 }
 
-BASE_URL = "https://staging.mrchurros.com.my"
+BASE_URL = "https://mrchurros.afed.app"
 
 # --- How to extend configuration ---
 # - Add new dictionaries for different environments (e.g., `DEV_CREDENTIALS`, `PROD_CREDENTIALS`).

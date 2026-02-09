@@ -24,7 +24,7 @@ class FinanceDashboard:
         # Strategy 1: Try to find "Welcome Back" text
         try:
             text_locator = browser.page.get_by_text("Welcome Back", exact=False)
-            text_locator.wait_for(state='visible', timeout=10000)
+            text_locator.wait_for(state='visible', timeout=5000)
             # Get the parent h1 element
             h1_locator = text_locator.locator("xpath=ancestor::h1[1]")
             h1_locator.wait_for(state='visible', timeout=5000)
@@ -70,7 +70,7 @@ class FinanceDashboard:
         # Strategy 4: Try getting text directly from get_by_text() for "Welcome"
         try:
             text_locator = browser.page.get_by_text("Welcome", exact=False)
-            text_locator.wait_for(state='visible', timeout=10000)
+            text_locator.wait_for(state='visible', timeout=5000)
             text_content = text_locator.text_content()
             if text_content:
                 return text_content.strip()
@@ -80,7 +80,7 @@ class FinanceDashboard:
         # Strategy 5: Look for "Inventory Dashboard" text
         try:
             text_locator = browser.page.get_by_text("Procurement Dashboard", exact=False)
-            text_locator.wait_for(state='visible', timeout=10000)
+            text_locator.wait_for(state='visible', timeout=5000)
             text_content = text_locator.text_content()
             if text_content:
                 return text_content.strip()
@@ -122,7 +122,7 @@ class FinanceDashboard:
         # Strategy 1: Check if "Welcome Back" text is visible anywhere on the page
         try:
             text_locator = browser.page.get_by_text("Welcome Back", exact=False)
-            text_locator.wait_for(state='visible', timeout=10000)
+            text_locator.wait_for(state='visible', timeout=5000)
             return text_locator.is_visible()
         except Exception:
             pass

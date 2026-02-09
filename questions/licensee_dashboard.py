@@ -23,7 +23,7 @@ class LicenseeDashboard:
         # Strategy 1: Use get_by_text() to find the text, then get parent h1
         try:
             text_locator = browser.page.get_by_text("Welcome Back", exact=False)
-            text_locator.wait_for(state='visible', timeout=10000)
+            text_locator.wait_for(state='visible', timeout=5000)
             # Get the parent h1 element
             h1_locator = text_locator.locator("xpath=ancestor::h1[1]")
             h1_locator.wait_for(state='visible', timeout=5000)
@@ -50,7 +50,7 @@ class LicenseeDashboard:
         # Strategy 3: Try getting text directly from get_by_text()
         try:
             text_locator = browser.page.get_by_text("Welcome Back", exact=False)
-            text_locator.wait_for(state='visible', timeout=10000)
+            text_locator.wait_for(state='visible', timeout=5000)
             text_content = text_locator.text_content()
             if text_content:
                 return text_content.strip()
@@ -83,7 +83,7 @@ class LicenseeDashboard:
         # Strategy 1: Check if "Welcome Back" text is visible anywhere on the page
         try:
             text_locator = browser.page.get_by_text("Welcome Back", exact=False)
-            text_locator.wait_for(state='visible', timeout=10000)
+            text_locator.wait_for(state='visible', timeout=5000)
             return text_locator.is_visible()
         except Exception:
             pass

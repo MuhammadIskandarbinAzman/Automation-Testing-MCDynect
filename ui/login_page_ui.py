@@ -6,11 +6,12 @@ class LoginPageUI:
     """
     Locators for elements on the login page.
     """
-    EMAIL_FIELD = "//input[@id='email']"
-    PASSWORD_FIELD = "//input[@id='password']"
-    SIGN_IN_BUTTON = "role=button[name=\"Sign in\"]"
-    # The ERROR_MESSAGE locator is now very specific based on previous debugging.
-    ERROR_MESSAGE = "p.text-error-500 >> text='These credentials do not match our records.'"
+    EMAIL_FIELD = "input[placeholder='me@example.com']"
+    PASSWORD_FIELD = "input[type='password']"
+    SIGN_IN_BUTTON = "role=button[name='Login']"
+    # Error message for invalid credentials (displayed as a toast notification)
+    # Using a more flexible locator that matches any element containing this text
+    ERROR_MESSAGE = "text=Invalid credentials"
 
 # --- How to create a new UI Page Locator file ---
 # 1. Create a new file in this directory (e.g., `dashboard_page_ui.py`).

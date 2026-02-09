@@ -7,6 +7,7 @@ import os
 import pytest
 from datetime import datetime
 from playwright.sync_api import Page, sync_playwright
+from playwright._impl._errors import TargetClosedError  # ← ADDED AT TOP
 
 from abilities.browse_the_web import BrowseTheWeb
 from actors.base_actor import Actor
@@ -18,9 +19,6 @@ from actors.production import Production
 from actors.licensing import Licensing
 from actors.compliance import Compliance
 from actors.finance import Finance
-from actors.licensee import Licensee
-
-# ... your other fixtures above ...
 
 def pytest_configure(config):
     """
@@ -52,6 +50,15 @@ def pytest_runtest_makereport(item, call):
     if page is None:
         return
 
+    # CRITICAL FIX: Check if page is still open BEFORE attempting screenshot
+    try:
+        if page.is_closed():
+            print(f"⚠️ Skipping screenshot - page already closed for {rep.nodeid}")
+            return
+    except Exception as e:
+        print(f"⚠️ Error checking page state: {e}")
+        return
+
     # Get the session-wide output directory created in pytest_configure
     test_output_dir = item.config.test_output_dir
     screenshots_dir = os.path.join(test_output_dir, "screenshots")
@@ -67,17 +74,23 @@ def pytest_runtest_makereport(item, call):
     )
     base_path = os.path.join(screenshots_dir, safe_test_name)
 
-    # Wait for page stability before screenshot
     try:
+        # Wait for page stability before screenshot
         page.wait_for_load_state("networkidle", timeout=5000)
-    except Exception:
-        pass  # Proceed even if timeout
+        
+        # Take screenshot on pass or fail
+        if rep.failed:
+            page.screenshot(path=f"{base_path}__FAILED.png", full_page=True)
+            print(f"📸 Screenshot saved: {base_path}__FAILED.png")
+        elif rep.passed:
+            page.screenshot(path=f"{base_path}__PASSED.png", full_page=True)
+            print(f"📸 Screenshot saved: {base_path}__PASSED.png")
+            
+    except TargetClosedError:
+        print(f"⚠️ Skipping screenshot for {safe_test_name} - TargetClosedError (page closed)")
+    except Exception as e:
+        print(f"⚠️ Screenshot error for {safe_test_name}: {type(e).__name__}: {e}")
 
-    # Take screenshot on pass or fail
-    if rep.failed:
-        page.screenshot(path=f"{base_path}__FAILED.png", full_page=True)
-    elif rep.passed:
-        page.screenshot(path=f"{base_path}__PASSED.png", full_page=True)
 @pytest.fixture(scope="session")
 def playwright_browser():
     """
@@ -142,15 +155,3 @@ def the_compliance(page: Page) -> Compliance:
 @pytest.fixture(scope="function")
 def the_finance(page: Page) -> Finance:
     return Finance().who_can(BrowseTheWeb.with_browser_page(page))
-
-
-
-# --- How to add a new Actor Fixture ---
-# 1. Ensure the Actor class is defined in `actors/` and imported here.
-# 2. Add a new fixture function:
-#    `@pytest.fixture(scope="function")`
-#    `def the_new_actor_role(page: Page) -> NewActorRole:`
-#        `return NewActorRole().who_can(BrowseTheWeb.with_browser_page(page))`
-#    (Replace `NewActorRole` with your actual actor class name).
-
-

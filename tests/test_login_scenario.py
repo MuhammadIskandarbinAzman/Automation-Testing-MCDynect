@@ -36,11 +36,11 @@ def test_licensee_can_log_in(the_licensee: Licensee):
     )
     # Wait for URL redirection before screenshots or dashboard assertions
     browser = the_licensee.uses_ability(BrowseTheWeb)
-    browser.page.wait_for_url(credentials["expected_dashboard_url"], timeout=10000)
+    browser.page.wait_for_url(credentials["expected_dashboard_url"], timeout=5000)
     # Wait for page to be fully loaded (network idle) to ensure all content is rendered
-    browser.page.wait_for_load_state("networkidle", timeout=10000)
+    browser.page.wait_for_load_state("networkidle", timeout=5000)
     # Additional small wait to ensure JavaScript-rendered content is displayed
-    browser.page.wait_for_timeout(10000)  # Wait 1 second for any dynamic content
+    browser.page.wait_for_timeout(5000)  # Wait 1 second for any dynamic content
     assert CurrentURL.value_for(the_licensee) == credentials["expected_dashboard_url"], (
         f"Expected URL {credentials['expected_dashboard_url']}, got {CurrentURL.value_for(the_licensee)}"
     )
@@ -70,12 +70,19 @@ def test_licensee_cannot_log_in_with_invalid_credentials(the_licensee: Licensee,
     Verifies that a Licensee actor cannot log in with invalid credentials
     and the correct error message is displayed.
     """
-    the_licensee.attempts_to(
-        Login.with_credentials("invalid@gmail.com", "invalidpassword")
-    )
+    from abilities.browse_the_web import BrowseTheWeb
+    from config.credentials import BASE_URL
+    
+    # Perform login manually to avoid the on-boarding timeout
+    browser = the_licensee.uses_ability(BrowseTheWeb)
+    browser.go_to(f"{BASE_URL}/login")
+    browser.find_and_fill(LoginPageUI.EMAIL_FIELD, "invalid@gmail.com")
+    browser.find_and_fill(LoginPageUI.PASSWORD_FIELD, "invalidpassword")
+    browser.find_and_click(LoginPageUI.SIGN_IN_BUTTON)
+    
     # Assert that the specific error message is displayed.
     # The `expect` assertion waits for the element to appear and contain the text.
-    expect(page.locator(LoginPageUI.ERROR_MESSAGE)).to_contain_text("These credentials do not match our records.")
+    expect(page.locator(LoginPageUI.ERROR_MESSAGE)).to_contain_text("Invalid credentials")
 
 def test_area_manager_can_log_in(the_area_manager: AreaManager):
     """
@@ -89,11 +96,11 @@ def test_area_manager_can_log_in(the_area_manager: AreaManager):
     )
     # Wait for URL redirection before screenshots or dashboard assertions
     browser = the_area_manager.uses_ability(BrowseTheWeb)
-    browser.page.wait_for_url(credentials["expected_dashboard_url"], timeout=10000)
+    browser.page.wait_for_url(credentials["expected_dashboard_url"], timeout=5000)
     # Wait for page to be fully loaded (network idle) to ensure all content is rendered
-    browser.page.wait_for_load_state("networkidle", timeout=10000)
+    browser.page.wait_for_load_state("networkidle", timeout=5000)
     # Additional small wait to ensure JavaScript-rendered content is displayed
-    browser.page.wait_for_timeout(10000)  # Wait 1 second for any dynamic content
+    browser.page.wait_for_timeout(5000)  # Wait 1 second for any dynamic content
     assert CurrentURL.value_for(the_area_manager) == credentials["expected_dashboard_url"], (
         f"Expected URL {credentials['expected_dashboard_url']}, got {CurrentURL.value_for(the_area_manager)}"
     )
@@ -123,11 +130,11 @@ def test_inventory_can_log_in(the_inventory: Inventory):
     )
     # Wait for URL redirection before screenshots or dashboard assertions
     browser = the_inventory.uses_ability(BrowseTheWeb)
-    browser.page.wait_for_url(credentials["expected_dashboard_url"], timeout=10000)
+    browser.page.wait_for_url(credentials["expected_dashboard_url"], timeout=5000)
     # Wait for page to be fully loaded (network idle) to ensure all content is rendered
-    browser.page.wait_for_load_state("networkidle", timeout=10000)
+    browser.page.wait_for_load_state("networkidle", timeout=5000)
     # Additional small wait to ensure JavaScript-rendered content is displayed
-    browser.page.wait_for_timeout(10000)  # Wait 10 seconds for any dynamic content
+    browser.page.wait_for_timeout(5000)  # Wait 10 seconds for any dynamic content
     assert CurrentURL.value_for(the_inventory) == credentials["expected_dashboard_url"], (
         f"Expected URL {credentials['expected_dashboard_url']}, got {CurrentURL.value_for(the_inventory)}"
     )
@@ -176,11 +183,11 @@ def test_procurement_can_log_in(the_procurement: Procurement):
     )
     # Wait for URL redirection before screenshots or dashboard assertions
     browser = the_procurement.uses_ability(BrowseTheWeb)
-    browser.page.wait_for_url(credentials["expected_dashboard_url"], timeout=10000)
+    browser.page.wait_for_url(credentials["expected_dashboard_url"], timeout=5000)
     # Wait for page to be fully loaded (network idle) to ensure all content is rendered
-    browser.page.wait_for_load_state("networkidle", timeout=10000)
+    browser.page.wait_for_load_state("networkidle", timeout=5000)
     # Additional small wait to ensure JavaScript-rendered content is displayed
-    browser.page.wait_for_timeout(10000)  # Wait 10 seconds for any dynamic content
+    browser.page.wait_for_timeout(5000)  # Wait 10 seconds for any dynamic content
     assert CurrentURL.value_for(the_procurement) == credentials["expected_dashboard_url"], (
         f"Expected URL {credentials['expected_dashboard_url']}, got {CurrentURL.value_for(the_procurement)}"
     )
@@ -229,11 +236,11 @@ def test_production_can_log_in(the_production: Production):
     )
     # Wait for URL redirection before screenshots or dashboard assertions
     browser = the_production.uses_ability(BrowseTheWeb)
-    browser.page.wait_for_url(credentials["expected_dashboard_url"], timeout=10000)
+    browser.page.wait_for_url(credentials["expected_dashboard_url"], timeout=5000)
     # Wait for page to be fully loaded (network idle) to ensure all content is rendered
-    browser.page.wait_for_load_state("networkidle", timeout=10000)
+    browser.page.wait_for_load_state("networkidle", timeout=5000)
     # Additional small wait to ensure JavaScript-rendered content is displayed
-    browser.page.wait_for_timeout(10000)  # Wait 10 seconds for any dynamic content
+    browser.page.wait_for_timeout(5000)  # Wait 10 seconds for any dynamic content
     assert CurrentURL.value_for(the_production) == credentials["expected_dashboard_url"], (
         f"Expected URL {credentials['expected_dashboard_url']}, got {CurrentURL.value_for(the_production)}"
     )
@@ -281,11 +288,11 @@ def test_licensing_can_log_in(the_licensing: Licensing):
     )
     # Wait for URL redirection before screenshots or dashboard assertions
     browser = the_licensing.uses_ability(BrowseTheWeb)
-    browser.page.wait_for_url(credentials["expected_dashboard_url"], timeout=10000)
+    browser.page.wait_for_url(credentials["expected_dashboard_url"], timeout=5000)
     # Wait for page to be fully loaded (network idle) to ensure all content is rendered
-    browser.page.wait_for_load_state("networkidle", timeout=10000)
+    browser.page.wait_for_load_state("networkidle", timeout=5000)
     # Additional small wait to ensure JavaScript-rendered content is displayed
-    browser.page.wait_for_timeout(10000)  # Wait 1 second for any dynamic content
+    browser.page.wait_for_timeout(5000)  # Wait 1 second for any dynamic content
     assert CurrentURL.value_for(the_licensing) == credentials["expected_dashboard_url"], (
         f"Expected URL {credentials['expected_dashboard_url']}, got {CurrentURL.value_for(the_licensing)}"
     )
@@ -333,11 +340,11 @@ def test_compliance_can_log_in(the_compliance: Compliance):
     )
      # Wait for URL redirection before screenshots or dashboard assertions
     browser = the_compliance.uses_ability(BrowseTheWeb)
-    browser.page.wait_for_url(credentials["expected_dashboard_url"], timeout=10000)
+    browser.page.wait_for_url(credentials["expected_dashboard_url"], timeout=5000)
     # Wait for page to be fully loaded (network idle) to ensure all content is rendered
-    browser.page.wait_for_load_state("networkidle", timeout=10000)
+    browser.page.wait_for_load_state("networkidle", timeout=5000)
     # Additional small wait to ensure JavaScript-rendered content is displayed
-    browser.page.wait_for_timeout(10000)  # Wait 10 seconds for any dynamic content
+    browser.page.wait_for_timeout(5000)  # Wait 10 seconds for any dynamic content
     assert CurrentURL.value_for(the_compliance) == credentials["expected_dashboard_url"], (
         f"Expected URL {credentials['expected_dashboard_url']}, got {CurrentURL.value_for(the_compliance)}"
     )
@@ -387,11 +394,11 @@ def test_finance_can_log_in(the_finance: Finance):
     )
     # Wait for URL redirection before screenshots or dashboard assertions
     browser = the_finance.uses_ability(BrowseTheWeb)
-    browser.page.wait_for_url(credentials["expected_dashboard_url"], timeout=10000)
+    browser.page.wait_for_url(credentials["expected_dashboard_url"], timeout=5000)
     # Wait for page to be fully loaded (network idle) to ensure all content is rendered
-    browser.page.wait_for_load_state("networkidle", timeout=10000)
+    browser.page.wait_for_load_state("networkidle", timeout=5000)
     # Additional small wait to ensure JavaScript-rendered content is displayed
-    browser.page.wait_for_timeout(10000)  # Wait 10 seconds for any dynamic content
+    browser.page.wait_for_timeout(5000)  # Wait 10 seconds for any dynamic content
     assert CurrentURL.value_for(the_finance) == credentials["expected_dashboard_url"], (
         f"Expected URL {credentials['expected_dashboard_url']}, got {CurrentURL.value_for(the_finance)}"
     )
