@@ -179,6 +179,7 @@ def the_licensee(page: Page) -> Licensee:
         email=creds["email"],
         password=creds["password"],
     )
+    actor.current_password = creds.get("current_password", creds["password"])
     # Grant the browser ability used by tasks and questions.
     actor.who_can(BrowseTheWeb.with_browser_page(page))
     return actor

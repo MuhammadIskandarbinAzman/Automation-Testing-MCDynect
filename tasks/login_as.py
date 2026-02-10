@@ -10,6 +10,9 @@ class LoginAs:
     def perform_as(self, actor):
         # Resolve credentials for the role and delegate to Login task.
         creds = LOGIN_CREDENTIALS[self.role]
+        # Keep actor password state in sync for downstream tasks.
+        actor.password = creds["password"]
+        actor.current_password = creds.get("current_password", creds["password"])
         return Login.with_credentials(
             creds["email"],
             creds["password"]

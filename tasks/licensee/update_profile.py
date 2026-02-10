@@ -38,7 +38,9 @@ class UpdateUserProfile:
         # Update password only when a new password is provided.
         if self.new_password:
             # Current password must be stored on the actor (from credentials).
-            current_password = getattr(actor, "password", None)
+            current_password = getattr(actor, "current_password", None) or getattr(
+                actor, "password", None
+            )
             if not current_password:
                 raise ValueError("Actor must have 'password' to update password")
 
@@ -57,3 +59,4 @@ class UpdateUserProfile:
 
             # Update actor's password
             actor.password = self.new_password
+            actor.current_password = self.new_password
