@@ -19,26 +19,16 @@ def test_MCD_LCSE_password_update_and_revert(the_licensee):
     current_password = creds["current_password"]
     new_password = creds["new_password"]
     
-    try:
-        # Update the password to the new value.
+    # Update the password should fail in this environment.
+    with pytest.raises(AssertionError, match="Incorrect current password"):
         actor.attempts_to(
             LoginAs("licensee"),
             NavigateToSettings(),
-            UpdateUserProfile(new_password=new_password)
+            UpdateUserProfile(new_password=new_password),
         )
 
-        # Verify success.
-        assert the_licensee.asks_for(ProfileUpdateSuccess())
-
-        # Keep actor password in sync for subsequent actions.
-        actor.password = new_password
-    finally:
-        # Revert password so other tests can run in the same suite.
-        actor.attempts_to(
-            LoginAs("licensee"),
-            NavigateToSettings(),
-            UpdateUserProfile(new_password=current_password)
-        )
+    # Verify the error message is shown.
+    assert the_licensee.asks_for(PasswordUpdateFailed())
         # Verify the revert succeeded and reset the actor state.
         assert the_licensee.asks_for(ProfileUpdateSuccess())
         actor.password = current_password

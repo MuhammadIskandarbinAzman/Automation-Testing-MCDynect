@@ -59,10 +59,20 @@ class Login:
 
         # We may be redirected to the onboarding page
         try:
-            button = page.locator(OnboardingPageUI.OPEN_MODULE_BUTTON).first
-            button.wait_for(state="visible", timeout=10000)
-            button.click()
-            page.wait_for_load_state("networkidle", timeout=15000)
+            if page.is_visible(OnboardingPageUI.ONBOARDING_HEADER):
+                # Infer role label from actor class (e.g., AreaManager -> "Area Manager").
+                role_label = "".join(
+                    [
+                        (" " + ch if ch.isupper() and i > 0 else ch)
+                        for i, ch in enumerate(actor.__class__.__name__)
+                    ]
+                ).strip()
+                open_role = page.locator(f"text=Open {role_label}")
+                if open_role.count() > 0:
+                    open_role.first.click()
+                else:
+                    page.locator(OnboardingPageUI.OPEN_MODULE_BUTTON).first.click()
+                page.wait_for_load_state("networkidle", timeout=15000)
         except Exception as e:
             print(f"Onboarding button not found or timed out: {str(e)}")
             pass
