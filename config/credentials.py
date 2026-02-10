@@ -4,9 +4,11 @@ Centralizing this data makes it easy to manage and adapt to different environmen
 """
 import os
 
+
 def _env(key: str, default: str) -> str:
     # Central helper to read env overrides with defaults.
     return os.getenv(key, default)
+
 
 BASE_URL = _env("MCDYNECT_BASE_URL", "https://staging.mrchurros.com.my")
 
