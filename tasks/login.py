@@ -59,7 +59,7 @@ class Login:
 
         # We may be redirected to the onboarding page
         try:
-            button = page.locator(OnboardingPageUI.OPEN_MODULE_BUTTON)
+            button = page.locator(OnboardingPageUI.OPEN_MODULE_BUTTON).first
             button.wait_for(state="visible", timeout=10000)
             button.click()
             page.wait_for_load_state("networkidle", timeout=15000)

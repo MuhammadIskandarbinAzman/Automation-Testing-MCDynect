@@ -16,7 +16,10 @@ class LoginPageUI:
     # Sign in button selector using text for stability across UI variants.
     SIGN_IN_BUTTON = "button:has-text('Sign in'), button:has-text('Login')"
     # Error message selector (supports multiple variants)
-    ERROR_MESSAGE = "text=/These credentials do not match our records.|Invalid credentials/"
+    ERROR_MESSAGE = (
+        ".text-error-500:has-text('These credentials do not match our records.'), "
+        "text=Invalid credentials"
+    )
 
 
 # --- How to create a new UI Page Locator file ---

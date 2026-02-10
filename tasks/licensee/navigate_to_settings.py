@@ -10,7 +10,9 @@ class NavigateToSettings:
         try:
             # Click User Account Menu Icon (sidebar menu button)
             menu_btn = page.locator(
-                'button[data-sidebar="menu-button"][data-slot="dropdown-menu-trigger"]'
+                'button[data-sidebar="menu-button"][data-slot="dropdown-menu-trigger"], '
+                'button[aria-label*="account" i], '
+                'button[aria-label*="profile" i]'
             )
             menu_btn.wait_for(state="visible", timeout=15000)
             menu_btn.click(force=True)
@@ -29,6 +31,14 @@ class NavigateToSettings:
             except Exception:
                 page.goto(f"{BASE_URL}/settings")
 
-            page.wait_for_url("**/settings", timeout=10000)
+            # Some environments land on /licensee/profile instead of /settings.
+            try:
+                page.wait_for_url("**/settings", timeout=10000)
+            except Exception:
+                page.wait_for_url("**/profile", timeout=10000)
 
-        page.locator("text=Profile Settings").first.wait_for(timeout=15000)
+        try:
+            page.locator("text=Profile Settings").first.wait_for(timeout=15000)
+        except Exception:
+            # Fallback for environments that use a different header.
+            page.locator("text=Profile").first.wait_for(timeout=15000)
