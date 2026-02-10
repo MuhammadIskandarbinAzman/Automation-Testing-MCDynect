@@ -5,80 +5,59 @@ Centralizing this data makes it easy to manage and adapt to different environmen
 import os
 
 
-def _env(key: str, default: str) -> str:
-    # Central helper to read env overrides with defaults.
-    return os.getenv(key, default)
+def _env(key: str) -> str:
+    # Central helper to read required env vars.
+    value = os.getenv(key)
+    if value is None or value == "":
+        raise RuntimeError(f"Missing required environment variable: {key}")
+    return value
 
 
-BASE_URL = _env("MCDYNECT_BASE_URL", "https://staging.mrchurros.com.my")
+BASE_URL = _env("MCDYNECT_BASE_URL")
 
 LOGIN_CREDENTIALS = {
     "licensee": {
         # Licensee role credentials and expected landing URL.
-        "email": _env("MCDYNECT_LICENSEE_EMAIL", "licensee@gmail.com"),
-        "password": _env("MCDYNECT_LICENSEE_PASSWORD", "masterpassword1234"),
-        "current_password": _env("MCDYNECT_LICENSEE_CURRENT_PASSWORD", "masterpassword1234"),
-        "new_password": _env("MCDYNECT_LICENSEE_NEW_PASSWORD", "newmasterpassword1234"),
-        "expected_dashboard_url": _env(
-            "MCDYNECT_LICENSEE_DASHBOARD_URL",
-            f"{BASE_URL}/licensee/dashboard",
-        ),
+        "email": _env("MCDYNECT_LICENSEE_EMAIL"),
+        "password": _env("MCDYNECT_LICENSEE_PASSWORD"),
+        "current_password": _env("MCDYNECT_LICENSEE_CURRENT_PASSWORD"),
+        "new_password": _env("MCDYNECT_LICENSEE_NEW_PASSWORD"),
+        "expected_dashboard_url": _env("MCDYNECT_LICENSEE_DASHBOARD_URL"),
     },
     "area_manager": {
-        "email": _env("MCDYNECT_AREA_MANAGER_EMAIL", "aiman.ghazali@mrchurros.com.my"),
-        "password": _env("MCDYNECT_AREA_MANAGER_PASSWORD", "masterpassword1234"),
-        "expected_dashboard_url": _env(
-            "MCDYNECT_AREA_MANAGER_DASHBOARD_URL",
-            f"{BASE_URL}/area-manager/dashboard",
-        ),
+        "email": _env("MCDYNECT_AREA_MANAGER_EMAIL"),
+        "password": _env("MCDYNECT_AREA_MANAGER_PASSWORD"),
+        "expected_dashboard_url": _env("MCDYNECT_AREA_MANAGER_DASHBOARD_URL"),
     },
     "inventory": {
-        "email": _env("MCDYNECT_INVENTORY_EMAIL", "inventory@mrchurros.com.my"),
-        "password": _env("MCDYNECT_INVENTORY_PASSWORD", "masterpassword1234"),
-        "expected_dashboard_url": _env(
-            "MCDYNECT_INVENTORY_DASHBOARD_URL",
-            f"{BASE_URL}/inventory/index",
-        ),
+        "email": _env("MCDYNECT_INVENTORY_EMAIL"),
+        "password": _env("MCDYNECT_INVENTORY_PASSWORD"),
+        "expected_dashboard_url": _env("MCDYNECT_INVENTORY_DASHBOARD_URL"),
     },
     "procurement": {
-        "email": _env("MCDYNECT_PROCUREMENT_EMAIL", "procurement@mrchurros.com.my"),
-        "password": _env("MCDYNECT_PROCUREMENT_PASSWORD", "masterpassword1234"),
-        "expected_dashboard_url": _env(
-            "MCDYNECT_PROCUREMENT_DASHBOARD_URL",
-            f"{BASE_URL}/procurement/dashboard",
-        ),
+        "email": _env("MCDYNECT_PROCUREMENT_EMAIL"),
+        "password": _env("MCDYNECT_PROCUREMENT_PASSWORD"),
+        "expected_dashboard_url": _env("MCDYNECT_PROCUREMENT_DASHBOARD_URL"),
     },
     "production": {
-        "email": _env("MCDYNECT_PRODUCTION_EMAIL", "production@mrchurros.com.my"),
-        "password": _env("MCDYNECT_PRODUCTION_PASSWORD", "masterpassword1234"),
-        "expected_dashboard_url": _env(
-            "MCDYNECT_PRODUCTION_DASHBOARD_URL",
-            f"{BASE_URL}/production/dashboard",
-        ),
+        "email": _env("MCDYNECT_PRODUCTION_EMAIL"),
+        "password": _env("MCDYNECT_PRODUCTION_PASSWORD"),
+        "expected_dashboard_url": _env("MCDYNECT_PRODUCTION_DASHBOARD_URL"),
     },
     "licensing": {
-        "email": _env("MCDYNECT_LICENSING_EMAIL", "licensing@mrchurros.com.my"),
-        "password": _env("MCDYNECT_LICENSING_PASSWORD", "masterpassword1234"),
-        "expected_dashboard_url": _env(
-            "MCDYNECT_LICENSING_DASHBOARD_URL",
-            f"{BASE_URL}/licensing/dashboard",
-        ),
+        "email": _env("MCDYNECT_LICENSING_EMAIL"),
+        "password": _env("MCDYNECT_LICENSING_PASSWORD"),
+        "expected_dashboard_url": _env("MCDYNECT_LICENSING_DASHBOARD_URL"),
     },
     "compliance": {
-        "email": _env("MCDYNECT_COMPLIANCE_EMAIL", "compliance@mrchurros.com.my"),
-        "password": _env("MCDYNECT_COMPLIANCE_PASSWORD", "masterpassword1234"),
-        "expected_dashboard_url": _env(
-            "MCDYNECT_COMPLIANCE_DASHBOARD_URL",
-            f"{BASE_URL}/compliance/index",
-        ),
+        "email": _env("MCDYNECT_COMPLIANCE_EMAIL"),
+        "password": _env("MCDYNECT_COMPLIANCE_PASSWORD"),
+        "expected_dashboard_url": _env("MCDYNECT_COMPLIANCE_DASHBOARD_URL"),
     },
     "finance": {
-        "email": _env("MCDYNECT_FINANCE_EMAIL", "finance@mrchurros.com.my"),
-        "password": _env("MCDYNECT_FINANCE_PASSWORD", "masterpassword1234"),
-        "expected_dashboard_url": _env(
-            "MCDYNECT_FINANCE_DASHBOARD_URL",
-            f"{BASE_URL}/finance/index",
-        ),
+        "email": _env("MCDYNECT_FINANCE_EMAIL"),
+        "password": _env("MCDYNECT_FINANCE_PASSWORD"),
+        "expected_dashboard_url": _env("MCDYNECT_FINANCE_DASHBOARD_URL"),
     },
 }
 
