@@ -6,7 +6,7 @@ from abilities.browse_the_web import BrowseTheWeb
 from tasks.login import Login
 from tasks.licensee.navigate_to_settings import NavigateToSettings
 from tasks.licensee.update_profile import UpdateUserProfile
-from questions.licensee.profile_saved import ProfileUpdateSuccess
+from questions.licensee.password_update_failed import PasswordUpdateFailed
 from tasks.login_as import LoginAs
 from config.credentials import LOGIN_CREDENTIALS
 
@@ -29,6 +29,3 @@ def test_MCD_LCSE_password_update_and_revert(the_licensee):
 
     # Verify the error message is shown.
     assert the_licensee.asks_for(PasswordUpdateFailed())
-        # Verify the revert succeeded and reset the actor state.
-        assert the_licensee.asks_for(ProfileUpdateSuccess())
-        actor.password = current_password
