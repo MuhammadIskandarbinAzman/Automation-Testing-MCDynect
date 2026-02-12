@@ -1,0 +1,38 @@
+import pytest
+from playwright.sync_api import expect
+
+from abilities.browse_the_web import BrowseTheWeb
+from config.credentials import BASE_URL, LOGIN_CREDENTIALS
+from tasks.login import Login
+
+
+def _dismiss_maybe_later_if_present(page) -> None:
+    maybe_later = page.locator("button:has-text('Maybe Later')")
+    if maybe_later.count() > 0 and maybe_later.first.is_visible():
+        maybe_later.first.click()
+
+
+@pytest.mark.licensee
+def test_MCD_LCSE_09_view_all_staff_directory(the_licensee):
+    """
+    Use Case: MCD-LCSE-09
+    Verifies user can open Staff Directory full listing from dashboard section.
+    """
+    creds = LOGIN_CREDENTIALS["licensee"]
+    the_licensee.attempts_to(Login.with_credentials(creds["email"], creds["password"]))
+
+    page = the_licensee.uses_ability(BrowseTheWeb).page
+    _dismiss_maybe_later_if_present(page)
+
+    staff_card = page.locator("text=Staff directory").first.locator(
+        "xpath=ancestor::div[contains(@class,'rounded')][1]"
+    )
+    expect(staff_card).to_be_visible()
+
+    see_more_btn = staff_card.locator("button:has-text('See more'), a:has-text('See more')").first
+    expect(see_more_btn).to_be_visible()
+    see_more_btn.click()
+
+    page.wait_for_url("**/licensee/staff/index", timeout=15000)
+    expect(page).to_have_url(f"{BASE_URL}/licensee/staff/index")
+    expect(page.locator("text=/Staff Directory/i").first).to_be_visible()
