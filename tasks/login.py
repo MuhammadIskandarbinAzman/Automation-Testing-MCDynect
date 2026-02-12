@@ -66,7 +66,10 @@ class Login:
                     for i, ch in enumerate(actor.__class__.__name__)
                 ]
             ).strip()
-            open_role = page.locator(f"text=Open {role_label}")
+            # Prefer role-scoped Open button on onboarding cards.
+            open_role = page.locator(
+                f"div:has-text('{role_label}') button:has-text('Open')"
+            )
             if open_role.count() > 0:
                 open_role.first.click()
                 page.wait_for_load_state("networkidle", timeout=15000)

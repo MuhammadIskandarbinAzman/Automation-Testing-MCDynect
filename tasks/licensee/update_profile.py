@@ -16,7 +16,9 @@ class UpdateUserProfile:
 
         # Ensure we are on the User profile tab before editing.
         if not page.is_visible(ProfileSelectors.NAME_INPUT):
-            page.click(ProfileSelectors.USER_TAB)
+            user_tab = page.locator(ProfileSelectors.USER_TAB)
+            if user_tab.count() > 0 and user_tab.first.is_visible():
+                user_tab.first.click()
 
         # Update profile fields if provided.
         if self.name:

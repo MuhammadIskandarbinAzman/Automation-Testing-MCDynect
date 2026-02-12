@@ -11,7 +11,9 @@ class GetProfileInfo(Question):
 
         # Ensure the User tab is active before reading fields.
         if not page.is_visible(ProfileSelectors.NAME_INPUT):
-            page.click(ProfileSelectors.USER_TAB)
+            user_tab = page.locator(ProfileSelectors.USER_TAB)
+            if user_tab.count() > 0 and user_tab.first.is_visible():
+                user_tab.first.click()
 
         # Wait for fields to be ready before reading.
         page.wait_for_selector(ProfileSelectors.NAME_INPUT, state="visible", timeout=5000)

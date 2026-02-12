@@ -7,8 +7,8 @@ class OnboardingPageUI:
     """
     # The "Open [Module]" button/link that leads to the dashboard
     # Works for "Open Licensee", "Open Area Manager", etc.
-    # Text selector is safest here; we'll pick the first match in the task.
-    OPEN_MODULE_BUTTON = "text=Open"
+    # Restrict to buttons to avoid matching debug toolbar text.
+    OPEN_MODULE_BUTTON = "button:has-text('Open')"
     
     # Header to verify we are on the on-boarding page
     ONBOARDING_HEADER = "h1:has-text('Welcome to Your On Boarding')"

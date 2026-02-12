@@ -3,6 +3,32 @@ This module stores configuration data such as login credentials and base URLs.
 Centralizing this data makes it easy to manage and adapt to different environments (e.g., staging, production).
 """
 import os
+from pathlib import Path
+
+
+def _load_dotenv() -> None:
+    """
+    Load .env from project root into process env (without overriding existing vars).
+    This keeps IDE test discovery and direct `pytest` runs consistent.
+    """
+    env_path = Path(__file__).resolve().parents[1] / ".env"
+    if not env_path.exists():
+        return
+
+    for raw_line in env_path.read_text(encoding="utf-8").splitlines():
+        line = raw_line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, value = line.split("=", 1)
+        key = key.strip()
+        value = value.strip()
+        # Remove optional wrapping quotes.
+        if len(value) >= 2 and value[0] == value[-1] and value[0] in {"'", '"'}:
+            value = value[1:-1]
+        os.environ.setdefault(key, value)
+
+
+_load_dotenv()
 
 
 def _env(key: str) -> str:
