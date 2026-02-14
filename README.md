@@ -62,10 +62,10 @@ flowchart TD
 - `tasks/login.py`: login flow + optional onboarding handling
 - `tasks/login_as.py`: role-based login using configured credentials
 - `tests/test_login_*.py`: split role login smoke/negative scenarios
-- `tests/test_licensee_opening_day.py`: UC07 opening day basic + exception path
-- `tests/test_licensee_announcements.py`: UC08 announcements listing/details
-- `tests/test_licensee_staff_directory.py`: UC09 staff directory listing
-- `tests/test_licensee_modify_staff.py`: UC10 modify staff information
+- `tests/licensee/test_licensee_opening_day.py`: UC07 opening day basic + exception path
+- `tests/licensee/test_licensee_announcements.py`: UC08 announcements listing/details
+- `tests/licensee/test_licensee_staff_directory.py`: UC09 staff directory listing
+- `tests/licensee/test_licensee_modify_staff.py`: UC10 modify staff information
 - `TEST_MATRIX.md`: latest run result and test-to-use-case mapping
 - `USE_CASES.md`: business use-case inventory
 
@@ -107,10 +107,10 @@ MCDYNECT_HEADLESS=true pytest -q
 MCDYNECT_HEADLESS=false pytest -q
 
 # Run only login scenarios
-MCDYNECT_HEADLESS=true pytest -q tests/test_login_*.py
+MCDYNECT_HEADLESS=true pytest -q tests/test_login_*.py tests/licensee/test_login_licensee.py
 
 # Run one test function
-MCDYNECT_HEADLESS=true pytest -q tests/test_login_licensee.py -k test_licensee_can_log_in
+MCDYNECT_HEADLESS=true pytest -q tests/licensee/test_login_licensee.py -k test_licensee_can_log_in
 
 # Run only licensee-marked tests
 MCDYNECT_HEADLESS=true pytest -q -m licensee
