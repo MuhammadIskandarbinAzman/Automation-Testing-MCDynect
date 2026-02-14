@@ -1,4 +1,5 @@
 import time
+import os
 
 import pytest
 from playwright.sync_api import expect
@@ -8,8 +9,11 @@ from config.credentials import BASE_URL
 from ui.login_page_ui import LoginPageUI
 
 
-TEST_LICENSEE_EMAIL = "ichiroadris@gmail.com"
-TEST_LICENSEE_PASSWORD = "masterpassword1234"
+def _required_env(key: str) -> str:
+    value = os.getenv(key, "").strip()
+    if not value:
+        raise RuntimeError(f"Missing required environment variable for test: {key}")
+    return value
 
 
 def _dismiss_maybe_later_if_present(page) -> None:
@@ -35,11 +39,13 @@ def test_MCD_LCSE_06_switch_outlet_account(the_licensee):
     """
     browser = the_licensee.uses_ability(BrowseTheWeb)
     page = browser.page
+    test_email = _required_env("MCDYNECT_SWITCH_OUTLET_EMAIL")
+    test_password = _required_env("MCDYNECT_SWITCH_OUTLET_PASSWORD")
 
     browser.clear_session()
     browser.go_to(f"{BASE_URL}/login")
-    browser.find_and_fill(LoginPageUI.EMAIL_FIELD, TEST_LICENSEE_EMAIL)
-    browser.find_and_fill(LoginPageUI.PASSWORD_FIELD, TEST_LICENSEE_PASSWORD)
+    browser.find_and_fill(LoginPageUI.EMAIL_FIELD, test_email)
+    browser.find_and_fill(LoginPageUI.PASSWORD_FIELD, test_password)
     browser.find_and_click(LoginPageUI.SIGN_IN_BUTTON)
     page.wait_for_url("**/licensee/dashboard", timeout=15000)
 
