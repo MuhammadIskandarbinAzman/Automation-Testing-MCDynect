@@ -61,7 +61,7 @@ flowchart TD
 - `abilities/browse_the_web.py`: wrapper for Playwright page operations
 - `tasks/login.py`: login flow + optional onboarding handling
 - `tasks/login_as.py`: role-based login using configured credentials
-- `tests/test_login_scenario.py`: role login smoke/negative scenarios
+- `tests/test_login_*.py`: split role login smoke/negative scenarios
 - `tests/test_licensee_opening_day.py`: UC07 opening day basic + exception path
 - `tests/test_licensee_announcements.py`: UC08 announcements listing/details
 - `tests/test_licensee_staff_directory.py`: UC09 staff directory listing
@@ -107,10 +107,10 @@ MCDYNECT_HEADLESS=true pytest -q
 MCDYNECT_HEADLESS=false pytest -q
 
 # Run only login scenarios
-MCDYNECT_HEADLESS=true pytest -q tests/test_login_scenario.py
+MCDYNECT_HEADLESS=true pytest -q tests/test_login_*.py
 
 # Run one test function
-MCDYNECT_HEADLESS=true pytest -q tests/test_login_scenario.py -k test_licensee_can_log_in
+MCDYNECT_HEADLESS=true pytest -q tests/test_login_licensee.py -k test_licensee_can_log_in
 
 # Run only licensee-marked tests
 MCDYNECT_HEADLESS=true pytest -q -m licensee

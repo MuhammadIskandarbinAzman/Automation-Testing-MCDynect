@@ -22,15 +22,15 @@
 | T-LCSE-09-01 | MCD-LCSE-09 | Navigate to full staff directory via dashboard | Licensee | `tests/test_licensee_staff_directory.py` | `test_MCD_LCSE_09_view_all_staff_directory` | Functional | Medium | PASS |
 | T-LCSE-10-01 | MCD-LCSE-10 | Modify staff information and revert | Licensee | `tests/test_licensee_modify_staff.py` | `test_MCD_LCSE_10_modify_staff_information` | Functional | High | PASS |
 | T-LCSE-PWD-01 | N/A | Password update should fail with incorrect current password flow | Licensee | `tests/test_licensee_update_password.py` | `test_MCD_LCSE_password_update_and_revert` | Negative | Medium | PASS |
-| T-LOGIN-LCSE-01 | N/A | Login success | Licensee | `tests/test_login_scenario.py` | `test_licensee_can_log_in` | Smoke | High | PASS |
-| T-LOGIN-LCSE-02 | N/A | Login failure with invalid credentials | Licensee | `tests/test_login_scenario.py` | `test_licensee_cannot_log_in_with_invalid_credentials` | Negative | High | PASS |
-| T-LOGIN-AM-01 | N/A | Login success | Area Manager | `tests/test_login_scenario.py` | `test_area_manager_can_log_in` | Smoke | Medium | PASS |
-| T-LOGIN-INV-01 | N/A | Login success | Inventory | `tests/test_login_scenario.py` | `test_inventory_can_log_in` | Smoke | Medium | PASS |
-| T-LOGIN-PROC-01 | N/A | Login success | Procurement | `tests/test_login_scenario.py` | `test_procurement_can_log_in` | Smoke | Medium | PASS |
-| T-LOGIN-PROD-01 | N/A | Login success | Production | `tests/test_login_scenario.py` | `test_production_can_log_in` | Smoke | Medium | PASS |
-| T-LOGIN-LIC-01 | N/A | Login success | Licensing | `tests/test_login_scenario.py` | `test_licensing_can_log_in` | Smoke | Medium | PASS |
-| T-LOGIN-COMP-01 | N/A | Login success | Compliance | `tests/test_login_scenario.py` | `test_compliance_can_log_in` | Smoke | Medium | PASS |
-| T-LOGIN-FIN-01 | N/A | Login success | Finance | `tests/test_login_scenario.py` | `test_finance_can_log_in` | Smoke | Medium | PASS |
+| T-LOGIN-LCSE-01 | N/A | Login success | Licensee | `tests/test_login_licensee.py` | `test_licensee_can_log_in` | Smoke | High | PASS |
+| T-LOGIN-LCSE-02 | N/A | Login failure with invalid credentials | Licensee | `tests/test_login_licensee.py` | `test_licensee_cannot_log_in_with_invalid_credentials` | Negative | High | PASS |
+| T-LOGIN-AM-01 | N/A | Login success | Area Manager | `tests/test_login_area_manager.py` | `test_area_manager_can_log_in` | Smoke | Medium | PASS |
+| T-LOGIN-INV-01 | N/A | Login success | Inventory | `tests/test_login_inventory.py` | `test_inventory_can_log_in` | Smoke | Medium | PASS |
+| T-LOGIN-PROC-01 | N/A | Login success | Procurement | `tests/test_login_procurement.py` | `test_procurement_can_log_in` | Smoke | Medium | PASS |
+| T-LOGIN-PROD-01 | N/A | Login success | Production | `tests/test_login_production.py` | `test_production_can_log_in` | Smoke | Medium | PASS |
+| T-LOGIN-LIC-01 | N/A | Login success | Licensing | `tests/test_login_licensing.py` | `test_licensing_can_log_in` | Smoke | Medium | PASS |
+| T-LOGIN-COMP-01 | N/A | Login success | Compliance | `tests/test_login_compliance.py` | `test_compliance_can_log_in` | Smoke | Medium | PASS |
+| T-LOGIN-FIN-01 | N/A | Login success | Finance | `tests/test_login_finance.py` | `test_finance_can_log_in` | Smoke | Medium | PASS |
 
 ## Suggested Status Values
 - `PASS`
