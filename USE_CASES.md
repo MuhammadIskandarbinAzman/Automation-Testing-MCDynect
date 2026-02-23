@@ -18,6 +18,13 @@ This file documents currently automated use cases and their test mappings in thi
 | MCD-LCSE-08 | View All Announcement Listings and Details | Licensee | AUTOMATED | `tests/licensee/test_licensee_announcements.py` | `test_MCD_LCSE_08_view_all_announcement_listings_and_details` |
 | MCD-LCSE-09 | View all Staff Directory | Licensee | AUTOMATED | `tests/licensee/test_licensee_staff_directory.py` | `test_MCD_LCSE_09_view_all_staff_directory` |
 | MCD-LCSE-10 | Modify Staff Information | Licensee | AUTOMATED | `tests/licensee/test_licensee_modify_staff.py` | `test_MCD_LCSE_10_modify_staff_information` |
+| MCD-LCSE-11 | Add Staff | Licensee | AUTOMATED | `tests/licensee/test_licensee_add_staff.py` | `test_MCD_LCSE_11_add_staff` |
+| MCD-LCSE-12 | View All Licensee Activities Form Application | Licensee | AUTOMATED | `tests/licensee/test_licensee_activities_application.py` | `test_MCD_LCSE_12_view_licensee_activities_form_application` |
+| MCD-LCSE-13 | Create Licensee Activities Form Application | Licensee | AUTOMATED | `tests/licensee/test_licensee_activities_application.py` | `test_MCD_LCSE_13_create_licensee_activities_form_application` |
+| MCD-LCSE-14 | View Sales Dashboard | Licensee | AUTOMATED | `tests/licensee/test_licensee_sales_dashboard.py` | `test_MCD_LCSE_14_view_sales_dashboard` |
+| MCD-LCSE-15 | Add Sales | Licensee | AUTOMATED | `tests/licensee/test_licensee_add_sales.py` | `test_MCD_LCSE_15_add_sales_open_form` |
+| MCD-LCSE-16 | View Daily Sales Details | Licensee | AUTOMATED (DATA-DEPENDENT) | `tests/licensee/test_licensee_view_daily_sales_details.py` | `test_MCD_LCSE_16_view_daily_sales_details` |
+| MCD-LCSE-17 | Edit Daily Sales Details | Licensee | AUTOMATED (DATA-DEPENDENT) | `tests/licensee/test_licensee_edit_daily_sales_details.py` | `test_MCD_LCSE_17_edit_daily_sales_details_open_form` |
 | N/A | Licensee Login Success | Licensee | AUTOMATED | `tests/licensee/test_login_licensee.py` | `test_licensee_can_log_in` |
 | N/A | Licensee Login Failure (Invalid Credentials) | Licensee | AUTOMATED | `tests/licensee/test_login_licensee.py` | `test_licensee_cannot_log_in_with_invalid_credentials` |
 | N/A | Role Login Success | Area Manager | AUTOMATED | `tests/test_login_area_manager.py` | `test_area_manager_can_log_in` |
@@ -62,6 +69,25 @@ This file documents currently automated use cases and their test mappings in thi
 - Uses dedicated credentials in the test.
 - Modifies staff name and reverts it in same test for data stability.
 - Fills start date when required by form validation.
+
+### MCD-LCSE-14
+- Validates navigation to Sales page from sidebar.
+- Verifies Daily Sales and Extra Sets tabs are accessible.
+- Verifies key listing headers in Daily Sales tab.
+
+### MCD-LCSE-15
+- Validates navigation from Sales page to Add sale page.
+- Verifies all key sales input fields are visible.
+- Kept non-destructive (does not submit sales record).
+
+### MCD-LCSE-16
+- Attempts to open details from a keyed-in daily sales row (not `Not filled`).
+- Data-dependent: test skips when no navigable keyed-in sales record exists in current environment.
+
+### MCD-LCSE-17
+- Attempts to open Sales Details and then click `Edit`.
+- Verifies Edit Sales form fields and `Update Sale` button are visible.
+- Data-dependent: skips when listing cannot navigate to details or selected record has no edit action.
 
 ## Template For New Use Cases
 

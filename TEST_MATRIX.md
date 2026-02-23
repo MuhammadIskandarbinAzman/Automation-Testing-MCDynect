@@ -1,10 +1,10 @@
 # TEST_MATRIX
 
 ## Latest Execution Summary
-- Run date: `2026-02-12`
-- Command: `MCDYNECT_HEADLESS=true pytest -q`
-- Result: `21 passed`
-- Duration: `219.15s`
+- Run date: `2026-02-23`
+- Command: `MCDYNECT_HEADLESS=true MCDYNECT_SWITCH_OUTLET_EMAIL=*** MCDYNECT_SWITCH_OUTLET_PASSWORD=*** pytest -q`
+- Result: `26 passed, 2 skipped`
+- Duration: `352.06s`
 
 ## Coverage Matrix
 
@@ -21,6 +21,13 @@
 | T-LCSE-08-01 | MCD-LCSE-08 | View all announcements and open detail in new tab | Licensee | `tests/licensee/test_licensee_announcements.py` | `test_MCD_LCSE_08_view_all_announcement_listings_and_details` | Functional | Medium | PASS |
 | T-LCSE-09-01 | MCD-LCSE-09 | Navigate to full staff directory via dashboard | Licensee | `tests/licensee/test_licensee_staff_directory.py` | `test_MCD_LCSE_09_view_all_staff_directory` | Functional | Medium | PASS |
 | T-LCSE-10-01 | MCD-LCSE-10 | Modify staff information and revert | Licensee | `tests/licensee/test_licensee_modify_staff.py` | `test_MCD_LCSE_10_modify_staff_information` | Functional | High | PASS |
+| T-LCSE-11-01 | MCD-LCSE-11 | Add staff from staff directory | Licensee | `tests/licensee/test_licensee_add_staff.py` | `test_MCD_LCSE_11_add_staff` | Functional | High | PASS |
+| T-LCSE-12-01 | MCD-LCSE-12 | View activities application listing/details | Licensee | `tests/licensee/test_licensee_activities_application.py` | `test_MCD_LCSE_12_view_licensee_activities_form_application` | Functional | Medium | PASS |
+| T-LCSE-13-01 | MCD-LCSE-13 | Open create application flow from activities page | Licensee | `tests/licensee/test_licensee_activities_application.py` | `test_MCD_LCSE_13_create_licensee_activities_form_application` | Functional | Medium | PASS |
+| T-LCSE-14-01 | MCD-LCSE-14 | View sales dashboard via sidebar and verify daily sales listing | Licensee | `tests/licensee/test_licensee_sales_dashboard.py` | `test_MCD_LCSE_14_view_sales_dashboard` | Functional | Medium | PASS |
+| T-LCSE-15-01 | MCD-LCSE-15 | Open Add sale form and verify required fields | Licensee | `tests/licensee/test_licensee_add_sales.py` | `test_MCD_LCSE_15_add_sales_open_form` | Functional | Medium | PASS |
+| T-LCSE-16-01 | MCD-LCSE-16 | Open daily sales details from keyed-in listing row | Licensee | `tests/licensee/test_licensee_view_daily_sales_details.py` | `test_MCD_LCSE_16_view_daily_sales_details` | Functional | Medium | BLOCKED |
+| T-LCSE-17-01 | MCD-LCSE-17 | Open edit form from daily sales details page | Licensee | `tests/licensee/test_licensee_edit_daily_sales_details.py` | `test_MCD_LCSE_17_edit_daily_sales_details_open_form` | Functional | Medium | BLOCKED |
 | T-LCSE-PWD-01 | N/A | Password update should fail with incorrect current password flow | Licensee | `tests/licensee/test_licensee_update_password.py` | `test_MCD_LCSE_password_update_and_revert` | Negative | Medium | PASS |
 | T-LOGIN-LCSE-01 | N/A | Login success | Licensee | `tests/licensee/test_login_licensee.py` | `test_licensee_can_log_in` | Smoke | High | PASS |
 | T-LOGIN-LCSE-02 | N/A | Login failure with invalid credentials | Licensee | `tests/licensee/test_login_licensee.py` | `test_licensee_cannot_log_in_with_invalid_credentials` | Negative | High | PASS |
