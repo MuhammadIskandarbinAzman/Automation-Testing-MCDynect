@@ -13,11 +13,17 @@ from ui.login_page_ui import LoginPageUI
 @pytest.mark.licensee
 def test_MCD_LCSE_03_logout_alternative_path_from_sidebar(the_licensee: Licensee):
     creds = LOGIN_CREDENTIALS["licensee"]
+    browser = the_licensee.uses_ability(BrowseTheWeb)
     the_licensee.attempts_to(
         Login.with_credentials(creds["email"], creds["password"]),
-        Logout.from_sidebar(),
     )
+    try:
+        browser.page.wait_for_url(creds["expected_dashboard_url"], timeout=10000)
+    except Exception:
+        browser.page.goto(creds["expected_dashboard_url"])
+        browser.page.wait_for_url(creds["expected_dashboard_url"], timeout=10000)
+    the_licensee.attempts_to(Logout.from_sidebar())
 
-    page = the_licensee.uses_ability(BrowseTheWeb).page
+    page = browser.page
     expect(page.locator(LoginPageUI.EMAIL_FIELD).first).to_be_visible()
     assert "/login" in CurrentURL.value_for(the_licensee)

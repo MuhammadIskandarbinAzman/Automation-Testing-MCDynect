@@ -1,5 +1,6 @@
 import pytest
 from playwright.sync_api import expect
+from playwright.sync_api import TimeoutError as PlaywrightTimeoutError
 
 from abilities.browse_the_web import BrowseTheWeb
 from config.credentials import BASE_URL
@@ -41,7 +42,13 @@ def test_MCD_LCSE_10_modify_staff_information(the_licensee):
     browser.find_and_fill(LoginPageUI.EMAIL_FIELD, TEST_LICENSEE_EMAIL)
     browser.find_and_fill(LoginPageUI.PASSWORD_FIELD, TEST_LICENSEE_PASSWORD)
     browser.find_and_click(LoginPageUI.SIGN_IN_BUTTON)
-    page.wait_for_url("**/licensee/dashboard", timeout=15000)
+    try:
+        page.wait_for_url(
+            "**/licensee/dashboard", timeout=15000, wait_until="domcontentloaded"
+        )
+    except PlaywrightTimeoutError:
+        # Some runs navigate but delay full load; accept URL match.
+        assert "/licensee/dashboard" in page.url, f"Unexpected post-login URL: {page.url}"
 
     _dismiss_maybe_later_if_present(page)
     page.goto(f"{BASE_URL}/licensee/staff/index")

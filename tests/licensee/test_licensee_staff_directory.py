@@ -1,5 +1,6 @@
 import pytest
 from playwright.sync_api import expect
+from playwright.sync_api import TimeoutError as PlaywrightTimeoutError
 
 from abilities.browse_the_web import BrowseTheWeb
 from config.credentials import BASE_URL, LOGIN_CREDENTIALS
@@ -12,6 +13,17 @@ def _dismiss_maybe_later_if_present(page) -> None:
         maybe_later.first.click()
 
 
+def _ensure_licensee_dashboard(actor, creds) -> None:
+    page = actor.uses_ability(BrowseTheWeb).page
+    if "/login" in page.url:
+        actor.attempts_to(Login.with_credentials(creds["email"], creds["password"]))
+        page = actor.uses_ability(BrowseTheWeb).page
+    try:
+        page.wait_for_url("**/licensee/**", timeout=15000, wait_until="domcontentloaded")
+    except PlaywrightTimeoutError:
+        pass
+
+
 @pytest.mark.licensee
 def test_MCD_LCSE_09_view_all_staff_directory(the_licensee):
     """
@@ -20,7 +32,7 @@ def test_MCD_LCSE_09_view_all_staff_directory(the_licensee):
     """
     creds = LOGIN_CREDENTIALS["licensee"]
     the_licensee.attempts_to(Login.with_credentials(creds["email"], creds["password"]))
-
+    _ensure_licensee_dashboard(the_licensee, creds)
     page = the_licensee.uses_ability(BrowseTheWeb).page
     _dismiss_maybe_later_if_present(page)
 

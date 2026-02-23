@@ -21,7 +21,11 @@ def test_MCD_LCSE_04_access_redeemable_item_tab_shortcut(the_licensee: Licensee)
 
     page = the_licensee.uses_ability(BrowseTheWeb).page
     page.locator("button:has-text('Redeem')").first.click()
-    page.wait_for_url("**/licensee/order/index?tab=redeemable", timeout=15000)
+    page.wait_for_url(
+        "**/licensee/order/index?tab=redeemable",
+        timeout=15000,
+        wait_until="domcontentloaded",
+    )
 
     expect(page).to_have_url(f"{BASE_URL}/licensee/order/index?tab=redeemable")
     expect(page.locator("h1:has-text('Order Stock')").first).to_be_visible()

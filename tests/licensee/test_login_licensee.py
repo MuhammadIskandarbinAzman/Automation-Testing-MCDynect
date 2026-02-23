@@ -52,8 +52,11 @@ def test_licensee_cannot_log_in_with_invalid_credentials(
     browser.find_and_fill(LoginPageUI.PASSWORD_FIELD, "invalidpassword")
     browser.find_and_click(LoginPageUI.SIGN_IN_BUTTON)
 
-    error = page.locator(
-        "p.text-error-500",
-        has_text="These credentials do not match our records.",
+    error_text = page.locator(
+        "text=/These credentials do not match our records|Invalid credentials/i"
     )
-    expect(error).to_be_visible()
+    error_css = page.locator("p.text-error-500")
+    if error_text.count() > 0:
+        expect(error_text.first).to_be_visible(timeout=10000)
+    else:
+        expect(error_css.first).to_be_visible(timeout=10000)

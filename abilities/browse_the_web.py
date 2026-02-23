@@ -1,7 +1,7 @@
 """
 This module defines the BrowseTheWeb ability, which allows actors to interact with web pages using Playwright.
 """
-from playwright.sync_api import Page, Locator
+from playwright.sync_api import Page, Locator, TimeoutError as PlaywrightTimeoutError
 
 class BrowseTheWeb:
     """
@@ -25,8 +25,18 @@ class BrowseTheWeb:
         """
         Navigates the browser to the specified URL.
         """
-        # Navigate to the target URL.
-        self.page.goto(url)
+        # Navigate to the target URL with retries for transient network issues.
+        last_error = None
+        for _ in range(3):
+            try:
+                self.page.goto(url, wait_until="domcontentloaded")
+                return
+            except PlaywrightTimeoutError as error:
+                last_error = error
+            except Exception as error:
+                last_error = error
+            self.page.wait_for_timeout(1000)
+        raise last_error
     
     def clear_session(self) -> None:
         """

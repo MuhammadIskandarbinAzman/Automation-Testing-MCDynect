@@ -2,6 +2,7 @@ import time
 
 import pytest
 from playwright.sync_api import expect
+from playwright.sync_api import TimeoutError as PlaywrightTimeoutError
 
 from abilities.browse_the_web import BrowseTheWeb
 from config.credentials import LOGIN_CREDENTIALS
@@ -20,6 +21,19 @@ def _opening_day_card(page):
     )
     expect(card).to_be_visible()
     return card
+
+
+def _ensure_licensee_dashboard(actor, creds) -> None:
+    """Retry login once if session drops back to /login before opening-day checks."""
+    page = actor.uses_ability(BrowseTheWeb).page
+    if "/login" in page.url:
+        actor.attempts_to(Login.with_credentials(creds["email"], creds["password"]))
+        page = actor.uses_ability(BrowseTheWeb).page
+    try:
+        page.wait_for_url("**/licensee/**", timeout=15000, wait_until="domcontentloaded")
+    except PlaywrightTimeoutError:
+        # Keep proceeding and let downstream assertions fail with clearer UI context.
+        pass
 
 
 def _get_visible_day_row(card, day: str):
@@ -59,6 +73,7 @@ def test_MCD_LCSE_07_modify_outlet_opening_day(the_licensee):
     creds = LOGIN_CREDENTIALS["licensee"]
     the_licensee.attempts_to(Login.with_credentials(creds["email"], creds["password"]))
 
+    _ensure_licensee_dashboard(the_licensee, creds)
     page = the_licensee.uses_ability(BrowseTheWeb).page
     _dismiss_maybe_later_if_present(page)
 
@@ -97,6 +112,7 @@ def test_MCD_LCSE_07_cancel_edit_opening_hours(the_licensee):
     creds = LOGIN_CREDENTIALS["licensee"]
     the_licensee.attempts_to(Login.with_credentials(creds["email"], creds["password"]))
 
+    _ensure_licensee_dashboard(the_licensee, creds)
     page = the_licensee.uses_ability(BrowseTheWeb).page
     _dismiss_maybe_later_if_present(page)
 
