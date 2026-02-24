@@ -25,6 +25,8 @@ This file documents currently automated use cases and their test mappings in thi
 | MCD-LCSE-15 | Add Sales | Licensee | AUTOMATED | `tests/licensee/test_licensee_add_sales.py` | `test_MCD_LCSE_15_add_sales_open_form` |
 | MCD-LCSE-16 | View Daily Sales Details | Licensee | AUTOMATED (DATA-DEPENDENT) | `tests/licensee/test_licensee_view_daily_sales_details.py` | `test_MCD_LCSE_16_view_daily_sales_details` |
 | MCD-LCSE-17 | Edit Daily Sales Details | Licensee | AUTOMATED (DATA-DEPENDENT) | `tests/licensee/test_licensee_edit_daily_sales_details.py` | `test_MCD_LCSE_17_edit_daily_sales_details_open_form` |
+| MCD-LCSE-18 | Delete Daily Sales Record | Licensee | AUTOMATED (SAFE/OPT-IN DESTRUCTIVE) | `tests/licensee/test_licensee_delete_daily_sales_record.py` | `test_MCD_LCSE_18_delete_daily_sales_record` |
+| MCD-LCSE-19 | Add Extra Sets Sales | Licensee | AUTOMATED (DATA-DEPENDENT) | `tests/licensee/test_licensee_add_extra_sets_sales.py` | `test_MCD_LCSE_19_add_extra_sets_sales_open_form` |
 | N/A | Licensee Login Success | Licensee | AUTOMATED | `tests/licensee/test_login_licensee.py` | `test_licensee_can_log_in` |
 | N/A | Licensee Login Failure (Invalid Credentials) | Licensee | AUTOMATED | `tests/licensee/test_login_licensee.py` | `test_licensee_cannot_log_in_with_invalid_credentials` |
 | N/A | Role Login Success | Area Manager | AUTOMATED | `tests/test_login_area_manager.py` | `test_area_manager_can_log_in` |
@@ -88,6 +90,16 @@ This file documents currently automated use cases and their test mappings in thi
 - Attempts to open Sales Details and then click `Edit`.
 - Verifies Edit Sales form fields and `Update Sale` button are visible.
 - Data-dependent: skips when listing cannot navigate to details or selected record has no edit action.
+
+### MCD-LCSE-18
+- Validates Delete Sales Record modal flow from Sales Details page.
+- Default mode is safe (cancel delete to avoid data loss).
+- Real delete is opt-in via `MCDYNECT_RUN_DESTRUCTIVE_UC18=true`.
+
+### MCD-LCSE-19
+- Validates navigation to Add Extra Sets Sale flow from Sales page.
+- Verifies key form fields are visible without submitting data.
+- Data-dependent: skips when Extra Sets tab/action is not enabled for the current outlet/account.
 
 ## Template For New Use Cases
 
