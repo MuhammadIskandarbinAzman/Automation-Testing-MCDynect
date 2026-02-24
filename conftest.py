@@ -94,7 +94,7 @@ def pytest_runtest_makereport(item, call):
 
     try:
         # Wait for page stability before screenshot
-        page.wait_for_load_state("networkidle", timeout=5000)
+        page.wait_for_load_state("networkidle", timeout=10000)
 
         # Take screenshot on pass or fail
         if rep.failed:
