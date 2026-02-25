@@ -27,6 +27,7 @@ This file documents currently automated use cases and their test mappings in thi
 | MCD-LCSE-17 | Edit Daily Sales Details | Licensee | AUTOMATED (DATA-DEPENDENT) | `tests/licensee/test_licensee_edit_daily_sales_details.py` | `test_MCD_LCSE_17_edit_daily_sales_details_open_form` |
 | MCD-LCSE-18 | Delete Daily Sales Record | Licensee | AUTOMATED (SAFE/OPT-IN DESTRUCTIVE) | `tests/licensee/test_licensee_delete_daily_sales_record.py` | `test_MCD_LCSE_18_delete_daily_sales_record` |
 | MCD-LCSE-19 | Add Extra Sets Sales | Licensee | AUTOMATED (DATA-DEPENDENT) | `tests/licensee/test_licensee_add_extra_sets_sales.py` | `test_MCD_LCSE_19_add_extra_sets_sales_open_form` |
+| MCD-LCSE-20 | View Extra Sets Sales Details | Licensee | AUTOMATED (DATA-DEPENDENT) | `tests/licensee/test_licensee_view_extra_sets_sales_details.py` | `test_MCD_LCSE_20_view_extra_sets_sales_details` |
 | N/A | Licensee Login Success | Licensee | AUTOMATED | `tests/licensee/test_login_licensee.py` | `test_licensee_can_log_in` |
 | N/A | Licensee Login Failure (Invalid Credentials) | Licensee | AUTOMATED | `tests/licensee/test_login_licensee.py` | `test_licensee_cannot_log_in_with_invalid_credentials` |
 | N/A | Role Login Success | Area Manager | AUTOMATED | `tests/test_login_area_manager.py` | `test_area_manager_can_log_in` |
@@ -100,6 +101,11 @@ This file documents currently automated use cases and their test mappings in thi
 - Validates navigation to Add Extra Sets Sale flow from Sales page.
 - Verifies key form fields are visible without submitting data.
 - Data-dependent: skips when Extra Sets tab/action is not enabled for the current outlet/account.
+
+### MCD-LCSE-20
+- Validates opening an entry from Extra Sets listing to Sales Details page.
+- Verifies details page shows expected sales fields (status, KG sold, channels, and totals).
+- Data-dependent: skips when no navigable Extra Sets sales record is available for the current outlet/account.
 
 ## Template For New Use Cases
 
