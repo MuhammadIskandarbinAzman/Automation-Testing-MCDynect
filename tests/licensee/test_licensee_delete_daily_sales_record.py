@@ -19,9 +19,20 @@ def _resolve_sales_creds() -> dict:
 
 
 def _dismiss_maybe_later_if_present(page) -> None:
-    maybe_later = page.locator("button:has-text('Maybe Later')")
-    if maybe_later.count() > 0 and maybe_later.first.is_visible():
-        maybe_later.first.click()
+    # Grab credentials modal appears intermittently after login.
+    # Try a few times so it doesn't block subsequent clicks.
+    for _ in range(6):
+        maybe_later = page.locator(
+            "button:has-text('Maybe Later'), button:has-text('Maybe later')"
+        ).first
+        if maybe_later.count() > 0 and maybe_later.is_visible():
+            try:
+                maybe_later.click()
+            except Exception:
+                maybe_later.click(force=True)
+            page.wait_for_timeout(300)
+            return
+        page.wait_for_timeout(500)
 
 
 def _ensure_licensee_dashboard(actor, creds) -> None:
@@ -50,6 +61,9 @@ def _open_sales_page(page) -> None:
 
 def _open_sales_details_page_or_fail(page) -> None:
     def _is_valid_details_url(url: str) -> bool:
+        # Most stable indicator for this app's details page.
+        if "/licensee/sales/show/" in url:
+            return True
         return (
             "/licensee/sales/" in url
             and not url.endswith("/licensee/sales/index")
@@ -146,6 +160,10 @@ def _open_sales_details_page_or_fail(page) -> None:
             target_url = details_link if details_link.startswith("http") else f"{BASE_URL}{details_link}"
             page.goto(target_url, wait_until="domcontentloaded")
             clicked = True
+
+    # Final guard: if we're already on a valid details page, continue.
+    if _is_valid_details_url(page.url):
+        return
 
     if not clicked:
         raise AssertionError("No daily sales details row/link available to open details.")
