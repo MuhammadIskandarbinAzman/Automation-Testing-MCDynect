@@ -59,7 +59,7 @@ flowchart TD
 - `conftest.py`: Playwright browser/page fixtures, actor fixtures, screenshot hook
 - `config/credentials.py`: loads `.env`, enforces required env vars
 - `abilities/browse_the_web.py`: wrapper for Playwright page operations
-- `tasks/login.py`: login flow + optional onboarding handling
+- `tasks/login.py`: login flow
 - `tasks/login_as.py`: role-based login using configured credentials
 - `tests/test_login_*.py`: split role login smoke/negative scenarios
 - `tests/licensee/test_licensee_opening_day.py`: UC07 opening day basic + exception path

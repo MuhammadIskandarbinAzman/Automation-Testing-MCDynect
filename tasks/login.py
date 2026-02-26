@@ -5,7 +5,6 @@ Tasks represent high-level business actions an Actor attempts.
 from actors.base_actor import Actor
 from abilities.browse_the_web import BrowseTheWeb
 from ui.login_page_ui import LoginPageUI
-from ui.onboarding_page_ui import OnboardingPageUI
 from config.credentials import BASE_URL
 from playwright.sync_api import TimeoutError as PlaywrightTimeoutError
 
@@ -54,31 +53,8 @@ class Login:
         browser.find_and_fill(LoginPageUI.PASSWORD_FIELD, self.password)
         browser.find_and_click(LoginPageUI.SIGN_IN_BUTTON)
 
-        # After sign in, wait a moment for the page to start loading
+        # After sign in, wait a moment for the redirect/load to settle.
         page.wait_for_timeout(2000)
-
-        # We may be redirected to the onboarding page
-        try:
-            # Infer role label from actor class (e.g., AreaManager -> "Area Manager").
-            role_label = "".join(
-                [
-                    (" " + ch if ch.isupper() and i > 0 else ch)
-                    for i, ch in enumerate(actor.__class__.__name__)
-                ]
-            ).strip()
-            # Prefer role-scoped Open button on onboarding cards.
-            open_role = page.locator(
-                f"div:has-text('{role_label}') button:has-text('Open')"
-            )
-            if open_role.count() > 0:
-                open_role.first.click()
-                page.wait_for_load_state("networkidle", timeout=15000)
-            elif page.locator(OnboardingPageUI.OPEN_MODULE_BUTTON).count() > 0:
-                page.locator(OnboardingPageUI.OPEN_MODULE_BUTTON).first.click()
-                page.wait_for_load_state("networkidle", timeout=15000)
-        except Exception as e:
-            print(f"Onboarding button not found or timed out: {str(e)}")
-            pass
 
 
 # --- How to create a new Task ---

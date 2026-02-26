@@ -1,5 +1,6 @@
 import os
 import re
+from datetime import date, timedelta
 
 import pytest
 from playwright.sync_api import TimeoutError as PlaywrightTimeoutError
@@ -7,7 +8,7 @@ from playwright.sync_api import expect
 
 from abilities.browse_the_web import BrowseTheWeb
 from config.credentials import BASE_URL, LOGIN_CREDENTIALS
-from tasks.login import Login
+from ui.login_page_ui import LoginPageUI
 
 
 def _resolve_sales_creds() -> dict:
@@ -45,6 +46,37 @@ def _ensure_licensee_dashboard(actor, creds) -> None:
         pass
 
 
+def _ensure_target_outlet_if_configured(page) -> None:
+    target_outlet = os.getenv("MCDYNECT_SWITCH_OUTLET_TARGET", "Cyberjaya").strip()
+    if not target_outlet:
+        return
+
+    card = page.locator("text=Outlet Account Switcher").first.locator(
+        "xpath=ancestor::div[contains(@class,'rounded')][1]"
+    )
+    if card.count() == 0 or not card.first.is_visible():
+        return
+
+    current_rows = card.locator("div.flex.justify-between.px-2").filter(
+        has=page.locator("button p:has-text('Current')")
+    )
+    if current_rows.count() > 0:
+        current_name = current_rows.first.locator("p.text-grey-800").first.inner_text().strip().lower()
+        if target_outlet.lower() in current_name:
+            return
+
+    target_rows = card.locator("div.flex.justify-between.px-2").filter(
+        has=page.locator(f"p.text-grey-800:has-text('{target_outlet}')")
+    )
+    for i in range(target_rows.count()):
+        row = target_rows.nth(i)
+        switch_btn = row.locator("button p:has-text('Switch')")
+        if switch_btn.count() > 0:
+            row.locator("button").first.click()
+            page.wait_for_timeout(1500)
+            return
+
+
 def _open_sales_page(page) -> None:
     sales_menu = page.locator("aside a:has-text('Sales'), aside button:has-text('Sales')").first
     if sales_menu.count() > 0 and sales_menu.is_visible():
@@ -59,131 +91,93 @@ def _open_sales_page(page) -> None:
 
 
 def _open_extra_sets_tab(page) -> None:
-    extra_sets_tabs = page.locator(
-        "button:has-text('Extra Sets'), [role='tab']:has-text('Extra Sets'), a:has-text('Extra Sets')"
-    )
-    visible_tabs = [i for i in range(extra_sets_tabs.count()) if extra_sets_tabs.nth(i).is_visible()]
-    if not visible_tabs:
-        pytest.skip("Extra Sets tab is not available for current outlet/account.")
-
-    extra_sets_tabs.nth(visible_tabs[0]).click()
+    page.goto(f"{BASE_URL}/licensee/sales/index", wait_until="domcontentloaded")
     page.wait_for_timeout(800)
+    for attempt in range(3):
+        _dismiss_maybe_later_if_present(page)
+        extra_sets_tabs = page.get_by_role("tab", name=re.compile(r"^Extra\s*sets$", re.I))
+        visible_tabs = [i for i in range(extra_sets_tabs.count()) if extra_sets_tabs.nth(i).is_visible()]
+
+        if not visible_tabs:
+            exact_buttons = page.locator("button").filter(has_text=re.compile(r"^Extra\s*sets$", re.I))
+            visible_tabs = [i for i in range(exact_buttons.count()) if exact_buttons.nth(i).is_visible()]
+            if visible_tabs:
+                tab = exact_buttons.nth(visible_tabs[0])
+            else:
+                tab = None
+        else:
+            tab = extra_sets_tabs.nth(visible_tabs[0])
+
+        if tab:
+            tab.click(force=True, timeout=5000)
+            page.wait_for_timeout(1200)
+            if "/licensee/sales/index" in page.url:
+                return
+            return
+        if attempt < 2:
+            page.goto(f"{BASE_URL}/licensee/sales/index", wait_until="domcontentloaded")
+            page.wait_for_timeout(1000)
+    pytest.skip("Extra Sets tab is not available for current outlet/account.")
 
 
 
-def _open_extra_sets_details_or_skip(page) -> None:
+def _open_extra_sets_details_or_skip(page) -> bool:
     def _valid_details_url(url: str) -> bool:
-        # Extra sets commonly uses dedicated route, but keep fallback for shared details route.
         return bool(
             ("/licensee/sales/extra/" in url and not re.search(r"/licensee/sales/extra/(index|add|create|edit)$", url))
             or ("/licensee/sales/show/" in url)
         )
 
     if _valid_details_url(page.url):
-        return
+        return True
 
-    clicked = False
-    rows = page.locator("table tbody tr")
-    for i in range(rows.count()):
-        row = rows.nth(i)
-        if not row.is_visible():
-            continue
+    show_links = page.locator("a[href*='/licensee/sales/show/']")
+    if show_links.count() == 0:
+        return False
+
+    # Prefer visible row link; fallback to direct navigation by href.
+    for i in range(show_links.count()):
+        link = show_links.nth(i)
         try:
-            row_action = row.locator(
-                "a[href*='/licensee/sales/extra/'], "
-                "a[href*='/licensee/sales/show/'], "
-                "a[href*='/licensee/sales/'], "
-                "button:has-text('View'), a:has-text('View')"
-            ).first
-            if row_action.count() > 0 and row_action.is_visible():
-                row_action.click()
-            else:
-                row.locator("td").first.click()
-            clicked = True
+            href = link.get_attribute("href") or ""
+        except Exception:
+            href = ""
+        if not href or not re.search(r"/licensee/sales/show/[^/?#]+", href):
+            continue
+        target_url = href if href.startswith("http") else f"{BASE_URL}{href}"
+        try:
+            page.goto(target_url, wait_until="domcontentloaded")
             break
         except Exception:
             continue
-
-    if not clicked:
-        # Non-table listing fallback: click status chips/date labels that usually open details.
-        for status_label in ["Not complete", "Completed", "Submitted", "Pending", "Not filled"]:
-            status_items = page.locator(f"text={status_label}")
-            for i in range(status_items.count()):
-                item = status_items.nth(i)
-                if not item.is_visible():
-                    continue
-                try:
-                    item.click()
-                except Exception:
-                    continue
-                page.wait_for_timeout(500)
-                try:
-                    page.wait_for_url("**/licensee/sales/**", timeout=4000, wait_until="domcontentloaded")
-                except PlaywrightTimeoutError:
-                    pass
-                if _valid_details_url(page.url):
-                    clicked = True
-                    break
-                if page.url != f"{BASE_URL}/licensee/sales/index":
-                    page.goto(f"{BASE_URL}/licensee/sales/index", wait_until="domcontentloaded")
-                    _open_extra_sets_tab(page)
-            if clicked:
-                break
-
-    if not clicked:
-        date_items = page.locator("text=/\\d{4}-\\d{2}-\\d{2}/")
-        for i in range(date_items.count()):
-            item = date_items.nth(i)
-            if not item.is_visible():
-                continue
-            try:
-                item.click()
-            except Exception:
-                continue
-            page.wait_for_timeout(500)
-            try:
-                page.wait_for_url("**/licensee/sales/**", timeout=4000, wait_until="domcontentloaded")
-            except PlaywrightTimeoutError:
-                pass
-            if _valid_details_url(page.url):
-                clicked = True
-                break
-            if page.url != f"{BASE_URL}/licensee/sales/index":
-                page.goto(f"{BASE_URL}/licensee/sales/index", wait_until="domcontentloaded")
-                _open_extra_sets_tab(page)
-
-    if not clicked:
-        links = page.eval_on_selector_all(
-            "a[href*='/licensee/sales/']",
-            "els => els.map(e => e.getAttribute('href') || '').filter(Boolean)",
-        )
-        details_link = next(
-            (
-                href
-                for href in links
-                if (
-                    "/licensee/sales/extra/" in href
-                    and not re.search(r"/licensee/sales/extra/(index|add|create|edit)$", href)
-                )
-                or re.search(r"/licensee/sales/show/[^/?#]+$", href)
-            ),
-            None,
-        )
-        if details_link:
-            target_url = details_link if details_link.startswith("http") else f"{BASE_URL}{details_link}"
-            page.goto(target_url, wait_until="domcontentloaded")
-            clicked = True
-
-    if not clicked:
-        pytest.skip("No Extra Sets sales details row/link available to open details.")
 
     try:
         page.wait_for_url("**/licensee/sales/**", timeout=15000, wait_until="domcontentloaded")
     except PlaywrightTimeoutError:
         pass
 
-    if not _valid_details_url(page.url) and page.url.endswith("/licensee/sales/index"):
-        pytest.skip("Extra Sets details page is not navigable from current listing UI/data.")
+    return _valid_details_url(page.url)
+
+def _seed_extra_sets_sale(page) -> None:
+    # Seed a minimal extra-sets sale record so UC20 can open details deterministically.
+    page.goto(f"{BASE_URL}/licensee/sales/extra/create", wait_until="domcontentloaded")
+    page.wait_for_timeout(800)
+    _dismiss_maybe_later_if_present(page)
+
+    seed_date = (date.today() - timedelta(days=60)).isoformat()
+    page.fill("input[type='date']", seed_date)
+    page.fill("#kg-sold", "12")
+    page.fill("#cash", "100")
+    page.fill("#online", "20")
+
+    key_in_sale = page.locator("button:has-text('Key in sale')").first
+    expect(key_in_sale).to_be_visible()
+    key_in_sale.click()
+
+    try:
+        page.wait_for_url("**/licensee/sales/index", timeout=15000, wait_until="domcontentloaded")
+    except PlaywrightTimeoutError:
+        pass
 
 
 @pytest.mark.licensee
@@ -193,14 +187,27 @@ def test_MCD_LCSE_20_view_extra_sets_sales_details(the_licensee):
     Verifies Licensee can open and view Extra Sets sales details.
     """
     creds = _resolve_sales_creds()
-    the_licensee.attempts_to(Login.with_credentials(creds["email"], creds["password"]))
-    _ensure_licensee_dashboard(the_licensee, creds)
+    browser = the_licensee.uses_ability(BrowseTheWeb)
+    page = browser.page
+    browser.clear_session()
+    browser.go_to(f"{BASE_URL}/login")
+    browser.find_and_fill(LoginPageUI.EMAIL_FIELD, creds["email"])
+    browser.find_and_fill(LoginPageUI.PASSWORD_FIELD, creds["password"])
+    browser.find_and_click(LoginPageUI.SIGN_IN_BUTTON)
+    page.wait_for_url("**/licensee/dashboard", timeout=20000)
 
-    page = the_licensee.uses_ability(BrowseTheWeb).page
+    _dismiss_maybe_later_if_present(page)
+    _ensure_target_outlet_if_configured(page)
     _dismiss_maybe_later_if_present(page)
     _open_sales_page(page)
     _open_extra_sets_tab(page)
-    _open_extra_sets_details_or_skip(page)
+    opened = _open_extra_sets_details_or_skip(page)
+    if not opened:
+        _seed_extra_sets_sale(page)
+        _open_sales_page(page)
+        _open_extra_sets_tab(page)
+        opened = _open_extra_sets_details_or_skip(page)
+    assert opened, "Unable to open Extra Sets sales details page after deterministic seed step."
 
     expect(page.locator(r"text=/Sale\s*details|Sales\s*Details/i").first).to_be_visible()
     expect(page.locator(r"text=/RM\s*\d+|Total\s*Sales|Sales\s*Amount/i").first).to_be_visible()
