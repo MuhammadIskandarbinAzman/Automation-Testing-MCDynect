@@ -40,6 +40,11 @@ def pytest_configure(config):
     os.makedirs(test_output_dir, exist_ok=True)
     # Store on config so hooks/fixtures can access it.
     config.test_output_dir = test_output_dir
+    # If pytest-html plugin is installed, write report into this run folder.
+    if hasattr(config.option, "htmlpath"):
+        config.option.htmlpath = os.path.join(test_output_dir, "report.html")
+        if hasattr(config.option, "self_contained_html"):
+            config.option.self_contained_html = True
 
 
 @pytest.hookimpl(hookwrapper=True)
