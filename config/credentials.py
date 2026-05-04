@@ -3,6 +3,7 @@ This module stores configuration data such as login credentials and base URLs.
 Centralizing this data makes it easy to manage and adapt to different environments (e.g., staging, production).
 """
 import os
+from collections.abc import Mapping
 from pathlib import Path
 
 
@@ -11,21 +12,22 @@ def _load_dotenv() -> None:
     Load .env from project root into process env (without overriding existing vars).
     This keeps IDE test discovery and direct `pytest` runs consistent.
     """
-    env_path = Path(__file__).resolve().parents[1] / ".env"
-    if not env_path.exists():
-        return
-
-    for raw_line in env_path.read_text(encoding="utf-8").splitlines():
-        line = raw_line.strip()
-        if not line or line.startswith("#") or "=" not in line:
+    for env_name in (".env", ".env.example"):
+        env_path = Path(__file__).resolve().parents[1] / env_name
+        if not env_path.exists():
             continue
-        key, value = line.split("=", 1)
-        key = key.strip()
-        value = value.strip()
-        # Remove optional wrapping quotes.
-        if len(value) >= 2 and value[0] == value[-1] and value[0] in {"'", '"'}:
-            value = value[1:-1]
-        os.environ.setdefault(key, value)
+
+        for raw_line in env_path.read_text(encoding="utf-8").splitlines():
+            line = raw_line.strip()
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+            key, value = line.split("=", 1)
+            key = key.strip()
+            value = value.strip()
+            # Remove optional wrapping quotes.
+            if len(value) >= 2 and value[0] == value[-1] and value[0] in {"'", '"'}:
+                value = value[1:-1]
+            os.environ.setdefault(key, value)
 
 
 _load_dotenv()
@@ -39,53 +41,88 @@ def _env(key: str) -> str:
     return value
 
 
-BASE_URL = _env("MCDYNECT_BASE_URL")
+def get_base_url() -> str:
+    return _env("MCDYNECT_BASE_URL")
 
-LOGIN_CREDENTIALS = {
-    "licensee": {
-        # Licensee role credentials and expected landing URL.
-        "email": _env("MCDYNECT_LICENSEE_EMAIL"),
-        "password": _env("MCDYNECT_LICENSEE_PASSWORD"),
-        "current_password": _env("MCDYNECT_LICENSEE_CURRENT_PASSWORD"),
-        "new_password": _env("MCDYNECT_LICENSEE_NEW_PASSWORD"),
-        "expected_dashboard_url": _env("MCDYNECT_LICENSEE_DASHBOARD_URL"),
-    },
-    "area_manager": {
-        "email": _env("MCDYNECT_AREA_MANAGER_EMAIL"),
-        "password": _env("MCDYNECT_AREA_MANAGER_PASSWORD"),
-        "expected_dashboard_url": _env("MCDYNECT_AREA_MANAGER_DASHBOARD_URL"),
-    },
-    "inventory": {
-        "email": _env("MCDYNECT_INVENTORY_EMAIL"),
-        "password": _env("MCDYNECT_INVENTORY_PASSWORD"),
-        "expected_dashboard_url": _env("MCDYNECT_INVENTORY_DASHBOARD_URL"),
-    },
-    "procurement": {
-        "email": _env("MCDYNECT_PROCUREMENT_EMAIL"),
-        "password": _env("MCDYNECT_PROCUREMENT_PASSWORD"),
-        "expected_dashboard_url": _env("MCDYNECT_PROCUREMENT_DASHBOARD_URL"),
-    },
-    "production": {
-        "email": _env("MCDYNECT_PRODUCTION_EMAIL"),
-        "password": _env("MCDYNECT_PRODUCTION_PASSWORD"),
-        "expected_dashboard_url": _env("MCDYNECT_PRODUCTION_DASHBOARD_URL"),
-    },
-    "licensing": {
-        "email": _env("MCDYNECT_LICENSING_EMAIL"),
-        "password": _env("MCDYNECT_LICENSING_PASSWORD"),
-        "expected_dashboard_url": _env("MCDYNECT_LICENSING_DASHBOARD_URL"),
-    },
-    "compliance": {
-        "email": _env("MCDYNECT_COMPLIANCE_EMAIL"),
-        "password": _env("MCDYNECT_COMPLIANCE_PASSWORD"),
-        "expected_dashboard_url": _env("MCDYNECT_COMPLIANCE_DASHBOARD_URL"),
-    },
-    "finance": {
-        "email": _env("MCDYNECT_FINANCE_EMAIL"),
-        "password": _env("MCDYNECT_FINANCE_PASSWORD"),
-        "expected_dashboard_url": _env("MCDYNECT_FINANCE_DASHBOARD_URL"),
-    },
-}
+
+def get_login_credentials() -> dict[str, dict[str, str]]:
+    return {
+        "licensee": {
+            # Licensee role credentials and expected landing URL.
+            "email": _env("MCDYNECT_LICENSEE_EMAIL"),
+            "password": _env("MCDYNECT_LICENSEE_PASSWORD"),
+            "current_password": _env("MCDYNECT_LICENSEE_CURRENT_PASSWORD"),
+            "new_password": _env("MCDYNECT_LICENSEE_NEW_PASSWORD"),
+            "expected_dashboard_url": _env("MCDYNECT_LICENSEE_DASHBOARD_URL"),
+        },
+        "area_manager": {
+            "email": _env("MCDYNECT_AREA_MANAGER_EMAIL"),
+            "password": _env("MCDYNECT_AREA_MANAGER_PASSWORD"),
+            "expected_dashboard_url": _env("MCDYNECT_AREA_MANAGER_DASHBOARD_URL"),
+        },
+        "inventory": {
+            "email": _env("MCDYNECT_INVENTORY_EMAIL"),
+            "password": _env("MCDYNECT_INVENTORY_PASSWORD"),
+            "expected_dashboard_url": _env("MCDYNECT_INVENTORY_DASHBOARD_URL"),
+        },
+        "procurement": {
+            "email": _env("MCDYNECT_PROCUREMENT_EMAIL"),
+            "password": _env("MCDYNECT_PROCUREMENT_PASSWORD"),
+            "expected_dashboard_url": _env("MCDYNECT_PROCUREMENT_DASHBOARD_URL"),
+        },
+        "production": {
+            "email": _env("MCDYNECT_PRODUCTION_EMAIL"),
+            "password": _env("MCDYNECT_PRODUCTION_PASSWORD"),
+            "expected_dashboard_url": _env("MCDYNECT_PRODUCTION_DASHBOARD_URL"),
+        },
+        "licensing": {
+            "email": _env("MCDYNECT_LICENSING_EMAIL"),
+            "password": _env("MCDYNECT_LICENSING_PASSWORD"),
+            "expected_dashboard_url": _env("MCDYNECT_LICENSING_DASHBOARD_URL"),
+        },
+        "compliance": {
+            "email": _env("MCDYNECT_COMPLIANCE_EMAIL"),
+            "password": _env("MCDYNECT_COMPLIANCE_PASSWORD"),
+            "expected_dashboard_url": _env("MCDYNECT_COMPLIANCE_DASHBOARD_URL"),
+        },
+        "finance": {
+            "email": _env("MCDYNECT_FINANCE_EMAIL"),
+            "password": _env("MCDYNECT_FINANCE_PASSWORD"),
+            "expected_dashboard_url": _env("MCDYNECT_FINANCE_DASHBOARD_URL"),
+        },
+    }
+
+
+class _LazyEnvValue:
+    def __init__(self, loader):
+        self._loader = loader
+
+    def _value(self) -> str:
+        return self._loader()
+
+    def __str__(self) -> str:
+        return self._value()
+
+    def __repr__(self) -> str:
+        return repr(self._value())
+
+    def __format__(self, format_spec: str) -> str:
+        return format(self._value(), format_spec)
+
+
+class _LazyCredentials(Mapping):
+    def __getitem__(self, key):
+        return get_login_credentials()[key]
+
+    def __iter__(self):
+        return iter(get_login_credentials())
+
+    def __len__(self) -> int:
+        return len(get_login_credentials())
+
+
+BASE_URL = _LazyEnvValue(get_base_url)
+LOGIN_CREDENTIALS = _LazyCredentials()
 
 # --- How to extend configuration ---
 # - Add new dictionaries for different environments (e.g., `DEV_CREDENTIALS`, `PROD_CREDENTIALS`).

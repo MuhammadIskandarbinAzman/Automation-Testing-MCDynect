@@ -72,8 +72,15 @@ flowchart TD
 ## Setup From Scratch
 
 ### Prerequisites
-- Python 3.10+ recommended
+- Python 3.12+ recommended
 - Git
+
+### PyCharm
+- Open the repository root directly, not a generated file from `.idea/`.
+- Create or select a Python 3.12+ interpreter, ideally the project-local `.venv`.
+- Install the project in editable mode with dev tools: `pip install -e .[dev]`
+- Copy `.env.example` to `.env` and replace the placeholder credentials before running tests.
+- Use the project root as the working directory for PyCharm pytest run configurations.
 
 ### Commands
 ```bash
@@ -87,10 +94,10 @@ source .venv/bin/activate
 
 # 3) Install dependencies
 pip install -U pip
-pip install pytest "playwright>=1.40.0"
+pip install -e .[dev]
 
 # 4) Install Playwright browser binaries
-python -m playwright install
+python3 -m playwright install
 
 # 5) Create env file
 cp .env.example .env
@@ -122,7 +129,7 @@ MCDYNECT_BROWSER=webkit MCDYNECT_HEADLESS=true pytest -q
 ```
 
 ## Configuration
-Configuration is loaded by `config/credentials.py` (with `.env` auto-load) and can be overridden by environment variables.
+Configuration is loaded by `config/credentials.py` (with `.env` auto-load and `.env.example` fallback for IDE discovery) and can be overridden by environment variables.
 
 Required keys:
 - `MCDYNECT_BASE_URL`
@@ -155,11 +162,12 @@ Required keys:
 - `MCDYNECT_FINANCE_PASSWORD`
 - `MCDYNECT_FINANCE_DASHBOARD_URL`
 
-If any key is missing, startup fails fast with:
+If a required key is still missing when a test actually uses it, execution fails fast with:
 `RuntimeError: Missing required environment variable: <KEY>`
 
 ## Artifacts and Notes
 - Screenshots are taken automatically after each test and saved under `test_runs/<timestamp>/screenshots`.
 - `pytest.ini` excludes the legacy `Automation-Testing-MCDynect/` folder from discovery.
+- `.idea/` is ignored because PyCharm project files are machine-specific.
 - `TEST_MATRIX.md` tracks the latest execution summary and coverage matrix.
 - `USE_CASES.md` tracks automated business use cases.

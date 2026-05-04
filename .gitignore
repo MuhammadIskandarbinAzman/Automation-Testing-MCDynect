@@ -1,6 +1,8 @@
+.idea/
 .env
 .pw_home/
 .pytest_cache/
+.venv/
 __pycache__/
 *.pyc
 test_runs/

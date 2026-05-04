@@ -1,0 +1,5 @@
+playwright<2.0,>=1.54
+pytest<9.0,>=8.4
+
+[dev]
+pytest-html<5.0,>=4.1
