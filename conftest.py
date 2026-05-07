@@ -25,6 +25,7 @@ from actors.production import Production
 from actors.licensing import Licensing
 from actors.compliance import Compliance
 from actors.finance import Finance
+from actors.admin import Admin
 
 
 def pytest_configure(config):
@@ -223,6 +224,11 @@ def the_compliance(page: Page) -> Compliance:
 @pytest.fixture(scope="function")
 def the_finance(page: Page) -> Finance:
     return Finance().who_can(BrowseTheWeb.with_browser_page(page))
+
+
+@pytest.fixture(scope="function")
+def the_admin(page: Page) -> Admin:
+    return Admin().who_can(BrowseTheWeb.with_browser_page(page))
 
 
 # --- How to add a new Actor Fixture ---

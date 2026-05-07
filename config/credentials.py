@@ -93,6 +93,110 @@ def get_login_credentials() -> dict[str, dict[str, str]]:
     }
 
 
+def get_admin_credentials() -> dict[str, str]:
+    """
+    Load admin credentials only when admin tests need them.
+
+    Keeping this separate prevents normal role tests from requiring admin env vars.
+    """
+    base_url = get_base_url()
+    return {
+        "email": _env("MCDYNECT_ADMIN_EMAIL"),
+        "password": _env("MCDYNECT_ADMIN_PASSWORD"),
+        "expected_dashboard_url": os.getenv(
+            "MCDYNECT_ADMIN_DASHBOARD_URL",
+            f"{base_url}/admin/dashboard",
+        ),
+    }
+
+
+def get_impersonation_targets() -> dict[str, dict[str, str]]:
+    """
+    Return impersonation targets for admin smoke tests.
+
+    `MCDYNECT_IMPERSONATE_ROLES` can limit the run, for example:
+    `licensee,finance,licensing`.
+    """
+    base_url = get_base_url()
+    all_targets = {
+        "licensee": {
+            "search": os.getenv("MCDYNECT_IMPERSONATE_LICENSEE_SEARCH", "licensee"),
+            "expected_url": os.getenv(
+                "MCDYNECT_IMPERSONATE_LICENSEE_URL",
+                f"{base_url}/licensee/dashboard",
+            ),
+        },
+        "finance": {
+            "search": os.getenv("MCDYNECT_IMPERSONATE_FINANCE_SEARCH", "finance"),
+            "expected_url": os.getenv(
+                "MCDYNECT_IMPERSONATE_FINANCE_URL",
+                f"{base_url}/finance/index",
+            ),
+        },
+        "licensing": {
+            "search": os.getenv("MCDYNECT_IMPERSONATE_LICENSING_SEARCH", "licensing"),
+            "expected_url": os.getenv(
+                "MCDYNECT_IMPERSONATE_LICENSING_URL",
+                f"{base_url}/licensing/dashboard",
+            ),
+        },
+        "production": {
+            "search": os.getenv("MCDYNECT_IMPERSONATE_PRODUCTION_SEARCH", "production"),
+            "expected_url": os.getenv(
+                "MCDYNECT_IMPERSONATE_PRODUCTION_URL",
+                f"{base_url}/production/dashboard",
+            ),
+        },
+        "compliance": {
+            "search": os.getenv("MCDYNECT_IMPERSONATE_COMPLIANCE_SEARCH", "compliance"),
+            "expected_url": os.getenv(
+                "MCDYNECT_IMPERSONATE_COMPLIANCE_URL",
+                f"{base_url}/compliance/index",
+            ),
+        },
+        "procurement": {
+            "search": os.getenv("MCDYNECT_IMPERSONATE_PROCUREMENT_SEARCH", "procurement"),
+            "expected_url": os.getenv(
+                "MCDYNECT_IMPERSONATE_PROCUREMENT_URL",
+                f"{base_url}/procurement/dashboard",
+            ),
+        },
+        "inventory": {
+            "search": os.getenv("MCDYNECT_IMPERSONATE_INVENTORY_SEARCH", "inventory"),
+            "expected_url": os.getenv(
+                "MCDYNECT_IMPERSONATE_INVENTORY_URL",
+                f"{base_url}/inventory/index",
+            ),
+        },
+        "area_manager": {
+            "search": os.getenv(
+                "MCDYNECT_IMPERSONATE_AREA_MANAGER_SEARCH",
+                "area manager",
+            ),
+            "expected_url": os.getenv(
+                "MCDYNECT_IMPERSONATE_AREA_MANAGER_URL",
+                f"{base_url}/area-manager/dashboard",
+            ),
+        },
+    }
+    selected_roles = os.getenv(
+        "MCDYNECT_IMPERSONATE_ROLES",
+        (
+            "licensee,area_manager,inventory,procurement,production,"
+            "licensing,compliance,finance"
+        ),
+    )
+    roles = [role.strip() for role in selected_roles.split(",") if role.strip()]
+    unknown_roles = [role for role in roles if role not in all_targets]
+    if unknown_roles:
+        available_roles = ", ".join(sorted(all_targets))
+        raise RuntimeError(
+            "Unknown MCDYNECT_IMPERSONATE_ROLES value(s): "
+            f"{', '.join(unknown_roles)}. Available roles: {available_roles}"
+        )
+    return {role: all_targets[role] for role in roles}
+
+
 class _LazyEnvValue:
     def __init__(self, loader):
         self._loader = loader
